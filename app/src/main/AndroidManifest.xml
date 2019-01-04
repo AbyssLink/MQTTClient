@@ -15,8 +15,10 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".base.MainActivity">
+        android:theme="@style/AppTheme.NoActionBar">
+        <activity
+            android:name=".base.MainActivity"
+            android:label="MQTTClient Home">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,7 +28,11 @@
         <!-- Mqtt Service -->
         <service android:name="org.eclipse.paho.android.service.MqttService" />
 
-        <activity android:name=".base.AddConnActivity"></activity>
+        <activity
+            android:name=".base.AddConnActivity"
+            android:label="add connection"
+            android:parentActivityName=".base.MainActivity" />
+        <activity android:name=".base.AddSensorActivity"></activity>
     </application>
 
 </manifest>
