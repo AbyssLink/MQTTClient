@@ -109,8 +109,8 @@ public class MainActivity extends AppCompatActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.fab: {
-//                Intent intent = new Intent(MainActivity.this, AddConnActivity.class);
-//                startActivity(intent);
+                Intent intent = new Intent(MainActivity.this, AddConnActivity.class);
+                startActivity(intent);
                 LinearLayoutManager linearLayoutManager = (LinearLayoutManager) mRecyclerView.getLayoutManager();
                 mAdapter.addItem(linearLayoutManager.findFirstVisibleItemPosition() + 1, insertData);
                 break;

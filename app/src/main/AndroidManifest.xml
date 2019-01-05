@@ -41,7 +41,10 @@
             android:name=".base.ControlActivity"
             android:label="Control"
             android:parentActivityName=".base.MainActivity" />
-        <activity android:name=".base.DetailViewActivity"></activity>
+        <activity
+            android:name=".base.DetailViewActivity"
+            android:label="Control"
+            android:parentActivityName=".base.MainActivity"></activity>
     </application>
 
 </manifest>

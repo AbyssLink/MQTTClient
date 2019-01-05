@@ -21,8 +21,8 @@ public class Connection {
     }
 
     @Generated(hash = 1789591368)
-    public Connection(Long id, String clientId, String serverIp, String serverPort, String userName,
-                      String password) {
+    public Connection(Long id, String clientId, String serverIp, String serverPort,
+                      String userName, String password) {
         this.id = id;
         this.clientId = clientId;
         this.serverIp = serverIp;

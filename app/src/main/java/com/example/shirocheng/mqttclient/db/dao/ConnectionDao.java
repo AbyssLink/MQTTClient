@@ -147,14 +147,8 @@ public class ConnectionDao extends AbstractDao<Connection, Long> {
         entity.setServerPort(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
         entity.setUserName(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
         entity.setPassword(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
-    }
-
-    @Override
-    protected final Long updateKeyAfterInsert(Connection entity, long rowId) {
-        entity.setId(rowId);
-        return rowId;
-    }
-
+     }
+     
     @Override
     public Long getKey(Connection entity) {
         if (entity != null) {
@@ -165,13 +159,9 @@ public class ConnectionDao extends AbstractDao<Connection, Long> {
     }
 
     @Override
-    public boolean hasKey(Connection entity) {
-        return entity.getId() != null;
-    }
-
-    @Override
-    protected final boolean isEntityUpdateable() {
-        return true;
+    protected final Long updateKeyAfterInsert(Connection entity, long rowId) {
+        entity.setId(rowId);
+        return rowId;
     }
 
     /**
@@ -187,4 +177,14 @@ public class ConnectionDao extends AbstractDao<Connection, Long> {
         public final static Property Password = new Property(5, String.class, "password", false, "PASSWORD");
     }
 
+    @Override
+    public boolean hasKey(Connection entity) {
+        return entity.getId() != null;
+    }
+
+    @Override
+    protected final boolean isEntityUpdateable() {
+        return true;
+    }
+    
 }

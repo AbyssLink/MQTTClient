@@ -77,7 +77,7 @@ public class SubscriptionDao extends AbstractDao<Subscription, Long> {
 
         Boolean isNumber = entity.getIsNumber();
         if (isNumber != null) {
-            stmt.bindLong(5, isNumber ? 1L : 0L);
+            stmt.bindLong(5, isNumber ? 1L: 0L);
         }
 
         String jsonKey = entity.getJsonKey();
@@ -112,7 +112,7 @@ public class SubscriptionDao extends AbstractDao<Subscription, Long> {
 
         Boolean isNumber = entity.getIsNumber();
         if (isNumber != null) {
-            stmt.bindLong(5, isNumber ? 1L : 0L);
+            stmt.bindLong(5, isNumber ? 1L: 0L);
         }
 
         String jsonKey = entity.getJsonKey();
@@ -147,14 +147,8 @@ public class SubscriptionDao extends AbstractDao<Subscription, Long> {
         entity.setTopic(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
         entity.setIsNumber(cursor.isNull(offset + 4) ? null : cursor.getShort(offset + 4) != 0);
         entity.setJsonKey(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
-    }
-
-    @Override
-    protected final Long updateKeyAfterInsert(Subscription entity, long rowId) {
-        entity.setId(rowId);
-        return rowId;
-    }
-
+     }
+     
     @Override
     public Long getKey(Subscription entity) {
         if (entity != null) {
@@ -165,13 +159,9 @@ public class SubscriptionDao extends AbstractDao<Subscription, Long> {
     }
 
     @Override
-    public boolean hasKey(Subscription entity) {
-        return entity.getId() != null;
-    }
-
-    @Override
-    protected final boolean isEntityUpdateable() {
-        return true;
+    protected final Long updateKeyAfterInsert(Subscription entity, long rowId) {
+        entity.setId(rowId);
+        return rowId;
     }
 
     /**
@@ -187,4 +177,14 @@ public class SubscriptionDao extends AbstractDao<Subscription, Long> {
         public final static Property JsonKey = new Property(5, String.class, "jsonKey", false, "JSON_KEY");
     }
 
+    @Override
+    public boolean hasKey(Subscription entity) {
+        return entity.getId() != null;
+    }
+
+    @Override
+    protected final boolean isEntityUpdateable() {
+        return true;
+    }
+    
 }
