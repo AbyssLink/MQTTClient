@@ -10,12 +10,14 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".db.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme.NoActionBar">
+        android:theme="@style/AppTheme.NoActionBar"
+        android:usesCleartextTraffic="true">
         <activity
             android:name=".base.MainActivity"
             android:label="MQTTClient Home">
@@ -32,7 +34,14 @@
             android:name=".base.AddConnActivity"
             android:label="add connection"
             android:parentActivityName=".base.MainActivity" />
-        <activity android:name=".base.AddSensorActivity"></activity>
+        <activity
+            android:name=".base.AddSensorActivity"
+            android:parentActivityName=".base.ControlActivity" />
+        <activity
+            android:name=".base.ControlActivity"
+            android:label="Control"
+            android:parentActivityName=".base.MainActivity" />
+        <activity android:name=".base.DetailViewActivity"></activity>
     </application>
 
 </manifest>

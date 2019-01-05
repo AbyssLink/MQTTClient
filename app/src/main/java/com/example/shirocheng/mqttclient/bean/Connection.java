@@ -1,15 +1,29 @@
-package com.example.shirocheng.mqttclient.data;
+package com.example.shirocheng.mqttclient.bean;
 
+import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Id;
+
+@Entity
 public class Connection {
+
+    @Id(autoincrement = true)
     private Long id;    // 主键自增
+
     private String clientId;    // 设备uuid, 也作为名称在视图显示
     private String serverIp;   // 主机ip
     private String serverPort;  // 主机端口
     private String userName;    // 用户名
     private String password;    // 用户密码
-    private boolean activate;   // 标识连接是否成功
 
-    public Connection(String clientId, String serverIp, String serverPort, String userName, String password) {
+    @Generated(hash = 1735801874)
+    public Connection() {
+    }
+
+    @Generated(hash = 1789591368)
+    public Connection(Long id, String clientId, String serverIp, String serverPort, String userName,
+                      String password) {
+        this.id = id;
         this.clientId = clientId;
         this.serverIp = serverIp;
         this.serverPort = serverPort;
@@ -65,11 +79,4 @@ public class Connection {
         this.password = password;
     }
 
-    public boolean isActivate() {
-        return activate;
-    }
-
-    public void setActivate(boolean activate) {
-        this.activate = activate;
-    }
 }

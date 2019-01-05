@@ -1,19 +1,29 @@
 package com.example.shirocheng.mqttclient.base;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.design.button.MaterialButton;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.DisplayMetrics;
 import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.shirocheng.mqttclient.R;
-import com.example.shirocheng.mqttclient.base.brief.MyViewModel;
+import com.example.shirocheng.mqttclient.base.brief.RecyclerViewAdapter;
+import com.example.shirocheng.mqttclient.base.view.ItemTouchHelperCallback;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -21,12 +31,58 @@ import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
 
-    @BindView(R.id.text_receive)
-    TextView textReceive;
+    @BindView(R.id.btnToControl)
+    MaterialButton btnToControl;
     @BindView(R.id.fab)
     FloatingActionButton fabAddConn;
     @BindView(R.id.toolbar_main)
     Toolbar toolbar;
+    @BindView(R.id.recycler_view_recycler_view)
+    RecyclerView mRecyclerView;
+    @BindView(R.id.swipe_refresh_layout_recycler_view)
+    SwipeRefreshLayout swipeRefreshLayout;
+
+    private RecyclerViewAdapter mAdapter;
+    private List<String> data;
+    private String insertData;
+    private boolean loading;
+    private int loadTimes;
+    RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+
+            final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+            if (!loading && linearLayoutManager.getItemCount() == (linearLayoutManager.findLastVisibleItemPosition() + 1)) {
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (loadTimes <= 5) {
+                            mAdapter.removeFooter();
+                            loading = false;
+                            mAdapter.addItems(data);
+                            mAdapter.addFooter();
+                            loadTimes++;
+                        } else {
+                            mAdapter.removeFooter();
+                            Snackbar.make(mRecyclerView, getString(R.string.no_more_data), Snackbar.LENGTH_SHORT).setCallback(new Snackbar.Callback() {
+                                @Override
+                                public void onDismissed(Snackbar transientBottomBar, int event) {
+                                    super.onDismissed(transientBottomBar, event);
+                                    loading = false;
+                                    mAdapter.addFooter();
+                                }
+                            }).show();
+                        }
+                    }
+                }, 1500);
+
+                loading = true;
+            }
+        }
+    };
+    private int color = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +90,37 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         Logger.addLogAdapter(new AndroidLogAdapter());
-        initToolBar();
-        updateUI();
+
+        initData();
+        initView();
+    }
+
+    private void initData() {
+        data = new ArrayList<>();
+        for (int i = 1; i <= 20; i++) {
+            data.add(i + "");
+        }
+
+        insertData = "0";
+        loadTimes = 0;
+    }
+
+    @OnClick({R.id.fab, R.id.btnToControl})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.fab: {
+//                Intent intent = new Intent(MainActivity.this, AddConnActivity.class);
+//                startActivity(intent);
+                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) mRecyclerView.getLayoutManager();
+                mAdapter.addItem(linearLayoutManager.findFirstVisibleItemPosition() + 1, insertData);
+                break;
+            }
+            case R.id.btnToControl: {
+                Intent intent = new Intent(MainActivity.this, ControlActivity.class);
+                startActivity(intent);
+                break;
+            }
+        }
     }
 
     private void initToolBar() {
@@ -44,43 +129,54 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setTitle("MqttClient Home");
     }
 
-    private void updateUI() {
-        MyViewModel model = ViewModelProviders.of(this).get(MyViewModel.class);
-        model.getSubscription(getApplicationContext()).observe(this, jsonValues -> {
-            // update UI
-            textReceive.setText(jsonValues);
-            Logger.w(jsonValues, "debug mqtt");
-            Toast.makeText(this, jsonValues, Toast.LENGTH_SHORT).show();
-        });
-    }
+    private void initView() {
+        initToolBar();
 
-/*    //    Handler 在主线程中创建，自动绑定主线程，通知主线程更新 UI：
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case 1:
-                    textReceive.setText(msg.obj.toString());
-                    break;
-                case 2:
-                    textReceive.setText("Disconnect");
-                    break;
-            }
+        if (getScreenWidthDp() >= 1200) {
+            final GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
+            mRecyclerView.setLayoutManager(gridLayoutManager);
+        } else if (getScreenWidthDp() >= 800) {
+            final GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+            mRecyclerView.setLayoutManager(gridLayoutManager);
+        } else {
+            final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+            mRecyclerView.setLayoutManager(linearLayoutManager);
         }
-    };*/
 
-/*    // 通知主线程
-    Message msg = handler.obtainMessage();
-    msg.what = 1;
-    msg.obj = message;
-                handler.sendMessage(msg);*/
+        mAdapter = new RecyclerViewAdapter(this);
+        mRecyclerView.setAdapter(mAdapter);
+        mAdapter.addHeader();
+        mAdapter.setItems(data);
+        mAdapter.addFooter();
 
-    @OnClick(R.id.fab)
-    public void onViewClicked(View view) {
-//        Snackbar.make(view, "Here's a Snackbar", Snackbar.LENGTH_LONG)
-//                .setAction("Action", null).show();
-        Intent intent = new Intent(MainActivity.this, AddConnActivity.class);
-        startActivity(intent);
+        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(mAdapter);
+        ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(callback);
+        mItemTouchHelper.attachToRecyclerView(mRecyclerView);
+
+        swipeRefreshLayout.setColorSchemeResources(R.color.google_blue, R.color.google_green, R.color.google_red, R.color.google_yellow);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (color > 4) {
+                            color = 0;
+                        }
+                        mAdapter.setColor(++color);
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                }, 2000);
+
+            }
+        });
+        mRecyclerView.addOnScrollListener(scrollListener);
     }
+
+    private int getScreenWidthDp() {
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        return (int) (displayMetrics.widthPixels / displayMetrics.density);
+    }
+
+
 }

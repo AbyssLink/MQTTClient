@@ -1,56 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/tools"
+    android:id="@+id/card_view_item_recycler_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/card_margin_horizontal_big_activity"
+    android:layout_marginTop="@dimen/card_margin_vertical_big_activity"
+    android:layout_marginEnd="@dimen/card_margin_horizontal_big_activity"
+    android:layout_marginBottom="@dimen/card_margin_vertical_big_activity"
     android:background="@color/white"
-    android:orientation="horizontal">
+    android:foreground="?attr/selectableItemBackground"
+    card_view:cardCornerRadius="@dimen/card_recycler_corner_radius"
+    card_view:cardElevation="@dimen/card_recycler_elevation">
 
-    <ImageView
-        android:id="@+id/item_img"
-        android:layout_width="42dp"
-        android:layout_height="42dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
-        android:src="@drawable/ic_cloud_blue_24dp" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/text_margin">
 
-    <TextView
-        android:id="@+id/item_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="13dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="16dp"
-        android:layout_toRightOf="@+id/item_img"
-        android:text="AWS Connection"
-        android:textColor="#000000"
-        android:textSize="18sp" />
+        <RelativeLayout
+            android:id="@+id/rela_round"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/text_margin"
+            android:background="@drawable/ic_cloud_blue_small"
+            android:transitionName="shareView" />
 
+        <TextView
+            android:id="@+id/tv_recycler_item_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/rela_round"
+            android:text="AWS Server"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
 
-    <ImageView
-        android:id="@+id/item_num"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="18dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="20dp"
-        android:src="@drawable/ic_dot_red_24dp" />
-
-    <TextView
-        android:id="@+id/item_address"
-        android:layout_width="194dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/item_name"
-        android:layout_marginLeft="13dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginRight="72dp"
-        android:layout_toRightOf="@+id/item_img"
-        android:lines="1"
-        android:text="192.168.134.26"
-        android:textColor="#878787"
-        android:textSize="13dp" />
+        <TextView
+            android:id="@+id/tv_recycler_item_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_recycler_item_1"
+            android:layout_marginTop="@dimen/text_margin_very_small"
+            android:layout_toEndOf="@id/rela_round"
+            android:text="120.78.134.26" />
 
 
-</RelativeLayout>
+        <ImageView
+            android:id="@+id/item_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/ic_dot_red_24dp" />
+
+    </RelativeLayout>
+</android.support.v7.widget.CardView>
