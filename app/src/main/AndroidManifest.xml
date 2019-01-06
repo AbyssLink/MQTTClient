@@ -35,13 +35,6 @@
             android:label="add connection"
             android:parentActivityName=".base.MainActivity" />
         <activity
-            android:name=".base.AddSensorActivity"
-            android:parentActivityName=".base.ControlActivity" />
-        <activity
-            android:name=".base.ControlActivity"
-            android:label="Control"
-            android:parentActivityName=".base.MainActivity" />
-        <activity
             android:name=".base.DetailViewActivity"
             android:label="Control"
             android:parentActivityName=".base.MainActivity"></activity>

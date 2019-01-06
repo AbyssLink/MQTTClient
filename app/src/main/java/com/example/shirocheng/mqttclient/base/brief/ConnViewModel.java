@@ -14,7 +14,6 @@ import java.util.List;
  */
 public class ConnViewModel extends ViewModel {
 
-    List<Connection> connections;
     private MutableLiveData<List<Connection>> conns;
 
     public LiveData<List<Connection>> getConnections() {
@@ -27,6 +26,13 @@ public class ConnViewModel extends ViewModel {
 
     private void loadConnections() {
         // Do an asynchronous operation to fetch data.
+        conns.postValue(DaoHelper.getInstance().loadAllConn());
+    }
+
+    /**
+     * 用于外部通知更新
+     */
+    public void refresh() {
         conns.setValue(DaoHelper.getInstance().loadAllConn());
     }
 

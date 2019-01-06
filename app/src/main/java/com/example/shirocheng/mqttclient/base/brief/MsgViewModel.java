@@ -46,7 +46,7 @@ public class MsgViewModel extends ViewModel {
                     @Override
                     public void messageArrived(String topic, MqttMessage mqttMessage) {
                         String message = mqttMessage.toString();
-                        jsonValues.setValue(message);
+                        jsonValues.postValue(message);
                     }
 
                     @Override

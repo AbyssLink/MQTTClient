@@ -20,6 +20,15 @@ public class SubscriptionDao extends AbstractDao<Subscription, Long> {
 
     public static final String TABLENAME = "SUBSCRIPTION";
 
+    public SubscriptionDao(DaoConfig config) {
+        super(config);
+    }
+
+
+    public SubscriptionDao(DaoConfig config, DaoSession daoSession) {
+        super(config, daoSession);
+    }
+
     /**
      * Creates the underlying database table.
      */
@@ -32,21 +41,6 @@ public class SubscriptionDao extends AbstractDao<Subscription, Long> {
                 "\"TOPIC\" TEXT," + // 3: topic
                 "\"IS_NUMBER\" INTEGER," + // 4: isNumber
                 "\"JSON_KEY\" TEXT);"); // 5: jsonKey
-    }
-
-
-    public SubscriptionDao(DaoConfig config) {
-        super(config);
-    }
-
-    public SubscriptionDao(DaoConfig config, DaoSession daoSession) {
-        super(config, daoSession);
-    }
-
-    /** Drops the underlying database table. */
-    public static void dropTable(Database db, boolean ifExists) {
-        String sql = "DROP TABLE " + (ifExists ? "IF EXISTS " : "") + "\"SUBSCRIPTION\"";
-        db.execSQL(sql);
     }
 
     @Override
@@ -82,6 +76,14 @@ public class SubscriptionDao extends AbstractDao<Subscription, Long> {
         if (jsonKey != null) {
             stmt.bindString(6, jsonKey);
         }
+    }
+
+    /**
+     * Drops the underlying database table.
+     */
+    public static void dropTable(Database db, boolean ifExists) {
+        String sql = "DROP TABLE " + (ifExists ? "IF EXISTS " : "") + "\"SUBSCRIPTION\"";
+        db.execSQL(sql);
     }
 
     @Override
@@ -155,7 +157,7 @@ public class SubscriptionDao extends AbstractDao<Subscription, Long> {
     
     @Override
     public Long getKey(Subscription entity) {
-        if (entity != null) {
+        if(entity != null) {
             return entity.getId();
         } else {
             return null;

@@ -37,7 +37,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private final Connection HEADER = new Connection(null, "HEADER", null, null, null, null);
     private Context context;
     private List<Connection> mItems;
-    private int color = 0;
+    private int color = 1;
     private View parentView;
 
     public RecyclerViewAdapter(Context context) {
@@ -115,24 +115,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             aa.setDuration(400);
 
             if (color == 1) {
-                recyclerViewHolder.rela_round.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.google_blue)));
-            } else if (color == 2) {
                 recyclerViewHolder.rela_round.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.google_green)));
-            } else if (color == 3) {
+            } else if (color == 2) {
                 recyclerViewHolder.rela_round.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.google_yellow)));
-            } else if (color == 4) {
+            } else if (color == 3) {
                 recyclerViewHolder.rela_round.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.google_red)));
-            } else {
-                recyclerViewHolder.rela_round.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.gray)));
+            } else if (color == 4) {
+                recyclerViewHolder.rela_round.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.google_blue)));
             }
-
-            recyclerViewHolder.rela_round.startAnimation(aa);
-            recyclerViewHolder.mView.setOnClickListener(view -> {
-                Intent intent = new Intent(context, DetailViewActivity.class);
-                intent.putExtra("color", color);
-                context.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation
-                        ((Activity) context, recyclerViewHolder.rela_round, "shareView").toBundle());
-            });
 
             // 设置视图内容
             Connection conn = mItems.get(i);
@@ -140,6 +130,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 ((RecyclerViewHolder) viewHolder).tv_conn_name.setText(conn.getClientId());
                 ((RecyclerViewHolder) viewHolder).tv_conn_ip.setText(conn.getServerIp());
             }
+
+
+            recyclerViewHolder.rela_round.startAnimation(aa);
+            recyclerViewHolder.mView.setOnClickListener(view -> {
+                Intent intent = new Intent(context, DetailViewActivity.class);
+                intent.putExtra("color", color);
+                intent.putExtra("ip", conn.getServerIp());
+                intent.putExtra("clientId", conn.getClientId());
+                context.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation
+                        ((Activity) context, recyclerViewHolder.rela_round, "shareView").toBundle());
+            });
         }
     }
 
@@ -185,6 +186,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         Snackbar.make(parentView, context.getString(R.string.item_swipe_dismissed), Snackbar.LENGTH_SHORT)
                 .setAction(context.getString(R.string.item_swipe_undo), v -> addItem(position, mItems.get(position))).show();
+
+        // 通知更新 UI todo: 优化
+        View vp = (View) parentView.getParent().getParent();
+        TextView tvConnNum = vp.findViewById(R.id.tv_conn_num);
+        tvConnNum.setText(String.valueOf(DaoHelper.getInstance().loadAllConn().size()));
     }
 
 

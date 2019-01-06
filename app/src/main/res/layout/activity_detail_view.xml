@@ -27,7 +27,8 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_margin="@dimen/text_margin_small"
-        android:text="share_view_press_it" />
+        android:text="Detail Page"
+        android:textColor="@color/colorPrimary" />
 
 
     <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/tools"
@@ -45,14 +46,123 @@
         card_view:cardCornerRadius="4dp"
         card_view:cardElevation="4dp">
 
-        <RelativeLayout
-            android:id="@+id/rela_round_big"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_margin="@dimen/share_view_round_margin"
-            android:background="@drawable/ic_cloud_blue_big"
-            android:transitionName="shareView" />
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/rela_round_big"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/share_view_round_margin"
+                android:background="@drawable/ic_cloud_blue_big"
+                android:transitionName="shareView" />
+        </LinearLayout>
+
     </android.support.v7.widget.CardView>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/card_share_view">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/text_margin"
+                    android:layout_weight="1"
+                    android:text="Server IP: "
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:id="@+id/tv_conn_ip"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/text_margin"
+                    android:layout_weight="2"
+                    android:textSize="16dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/text_margin"
+                    android:layout_marginRight="@dimen/text_margin"
+                    android:layout_weight="1"
+                    android:text="Client ID: "
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:id="@+id/tv_conn_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/text_margin"
+                    android:layout_marginRight="@dimen/text_margin"
+                    android:layout_weight="2"
+                    android:textSize="16dp" />
+
+            </LinearLayout>
+
+            <android.support.design.button.MaterialButton
+                android:id="@+id/btn_connect"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/btn_margin"
+                android:background="@color/colorPrimary"
+                android:text="Connect"
+                android:textColor="@color/white" />
+
+            <android.support.design.button.MaterialButton
+                android:id="@+id/btn_subscribe"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/btn_margin"
+                android:layout_marginRight="@dimen/btn_margin"
+                android:background="@color/colorPrimary"
+                android:text="Subscribe"
+                android:textColor="@color/white" />
+
+            <android.support.design.button.MaterialButton
+                android:id="@+id/btn_publish"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/btn_margin"
+                android:background="@color/colorPrimary"
+                android:text="Publish"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/tv_receive"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/text_margin"
+                android:text="wait for subscribtion"
+                android:textAlignment="center" />
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
 
 </RelativeLayout>

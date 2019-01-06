@@ -23,20 +23,6 @@ public class DaoMaster extends AbstractDaoMaster {
         this(new StandardDatabase(db));
     }
 
-    public DaoMaster(Database db) {
-        super(db, SCHEMA_VERSION);
-        registerDaoClass(SubscriptionDao.class);
-        registerDaoClass(ConnectionDao.class);
-    }
-
-    /**
-     * Creates underlying database table using DAOs.
-     */
-    public static void createAllTables(Database db, boolean ifNotExists) {
-        SubscriptionDao.createTable(db, ifNotExists);
-        ConnectionDao.createTable(db, ifNotExists);
-    }
-
     /** Drops underlying database table using DAOs. */
     public static void dropAllTables(Database db, boolean ifExists) {
         SubscriptionDao.dropTable(db, ifExists);
@@ -51,6 +37,20 @@ public class DaoMaster extends AbstractDaoMaster {
         Database db = new DevOpenHelper(context, name).getWritableDb();
         DaoMaster daoMaster = new DaoMaster(db);
         return daoMaster.newSession();
+    }
+
+    public DaoMaster(Database db) {
+        super(db, SCHEMA_VERSION);
+        registerDaoClass(SubscriptionDao.class);
+        registerDaoClass(ConnectionDao.class);
+    }
+
+    /**
+     * Creates underlying database table using DAOs.
+     */
+    public static void createAllTables(Database db, boolean ifNotExists) {
+        SubscriptionDao.createTable(db, ifNotExists);
+        ConnectionDao.createTable(db, ifNotExists);
     }
 
     public DaoSession newSession() {

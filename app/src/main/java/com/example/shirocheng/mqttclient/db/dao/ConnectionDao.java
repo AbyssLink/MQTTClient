@@ -20,6 +20,15 @@ public class ConnectionDao extends AbstractDao<Connection, Long> {
 
     public static final String TABLENAME = "CONNECTION";
 
+    public ConnectionDao(DaoConfig config) {
+        super(config);
+    }
+
+
+    public ConnectionDao(DaoConfig config, DaoSession daoSession) {
+        super(config, daoSession);
+    }
+
     /**
      * Creates the underlying database table.
      */
@@ -32,21 +41,6 @@ public class ConnectionDao extends AbstractDao<Connection, Long> {
                 "\"SERVER_PORT\" TEXT," + // 3: serverPort
                 "\"USER_NAME\" TEXT," + // 4: userName
                 "\"PASSWORD\" TEXT);"); // 5: password
-    }
-
-
-    public ConnectionDao(DaoConfig config) {
-        super(config);
-    }
-
-    public ConnectionDao(DaoConfig config, DaoSession daoSession) {
-        super(config, daoSession);
-    }
-
-    /** Drops the underlying database table. */
-    public static void dropTable(Database db, boolean ifExists) {
-        String sql = "DROP TABLE " + (ifExists ? "IF EXISTS " : "") + "\"CONNECTION\"";
-        db.execSQL(sql);
     }
 
     @Override
@@ -82,6 +76,14 @@ public class ConnectionDao extends AbstractDao<Connection, Long> {
         if (password != null) {
             stmt.bindString(6, password);
         }
+    }
+
+    /**
+     * Drops the underlying database table.
+     */
+    public static void dropTable(Database db, boolean ifExists) {
+        String sql = "DROP TABLE " + (ifExists ? "IF EXISTS " : "") + "\"CONNECTION\"";
+        db.execSQL(sql);
     }
 
     @Override
@@ -155,7 +157,7 @@ public class ConnectionDao extends AbstractDao<Connection, Long> {
     
     @Override
     public Long getKey(Connection entity) {
-        if (entity != null) {
+        if(entity != null) {
             return entity.getId();
         } else {
             return null;

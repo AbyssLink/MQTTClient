@@ -4,7 +4,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.button.MaterialButton;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -34,8 +33,6 @@ import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
 
-    @BindView(R.id.btnToControl)
-    MaterialButton btnToControl;
     @BindView(R.id.fab)
     FloatingActionButton fabAddConn;
     @BindView(R.id.toolbar_main)
@@ -98,16 +95,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    @OnClick({R.id.fab, R.id.btnToControl})
+    @OnClick({R.id.fab})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.fab: {
                 Intent intent = new Intent(MainActivity.this, AddConnActivity.class);
-                startActivity(intent);
-                break;
-            }
-            case R.id.btnToControl: {
-                Intent intent = new Intent(MainActivity.this, ControlActivity.class);
                 startActivity(intent);
                 break;
             }
@@ -117,12 +109,13 @@ public class MainActivity extends AppCompatActivity {
     /**
      * 使用 Model 观察数据变化，更新 UI
      */
-    private void updateUI() {
+    public void updateUI() {
         ConnViewModel model = ViewModelProviders.of(this).get(ConnViewModel.class);
         model.getConnections().observe(this, conns -> {
             // update UI
             connections = conns;
             initView();
+
             // 连接数
             tvConnNum.setText(String.valueOf(connections.size()));
         });
