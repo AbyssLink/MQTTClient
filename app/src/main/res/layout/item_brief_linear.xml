@@ -28,26 +28,26 @@
             android:transitionName="shareView" />
 
         <TextView
-            android:id="@+id/tv_recycler_item_1"
+            android:id="@+id/tv_conn_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/rela_round"
             android:text="AWS Server"
             android:textColor="@color/black"
-            android:textSize="18sp" />
+            android:textSize="21sp" />
 
         <TextView
-            android:id="@+id/tv_recycler_item_2"
+            android:id="@+id/tv_conn_ip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tv_recycler_item_1"
+            android:layout_below="@id/tv_conn_name"
             android:layout_marginTop="@dimen/text_margin_very_small"
             android:layout_toEndOf="@id/rela_round"
             android:text="120.78.134.26" />
 
 
         <ImageView
-            android:id="@+id/item_num"
+            android:id="@+id/ic_active"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"

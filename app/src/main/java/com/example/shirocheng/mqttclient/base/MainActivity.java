@@ -1,5 +1,6 @@
 package com.example.shirocheng.mqttclient.base;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,14 +16,16 @@ import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.widget.TextView;
 
 import com.example.shirocheng.mqttclient.R;
+import com.example.shirocheng.mqttclient.base.brief.ConnViewModel;
 import com.example.shirocheng.mqttclient.base.brief.RecyclerViewAdapter;
 import com.example.shirocheng.mqttclient.base.view.ItemTouchHelperCallback;
+import com.example.shirocheng.mqttclient.bean.Connection;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -41,12 +44,14 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView mRecyclerView;
     @BindView(R.id.swipe_refresh_layout_recycler_view)
     SwipeRefreshLayout swipeRefreshLayout;
+    @BindView(R.id.tv_conn_num)
+    TextView tvConnNum;
 
     private RecyclerViewAdapter mAdapter;
-    private List<String> data;
-    private String insertData;
+    private List<Connection> connections;
     private boolean loading;
-    private int loadTimes;
+    private int loadTimes = 1;
+    private int color = 0;
     RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -58,10 +63,10 @@ public class MainActivity extends AppCompatActivity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if (loadTimes <= 5) {
+                        if (loadTimes < 1) {
                             mAdapter.removeFooter();
                             loading = false;
-                            mAdapter.addItems(data);
+                            mAdapter.addItems(connections);
                             mAdapter.addFooter();
                             loadTimes++;
                         } else {
@@ -71,18 +76,16 @@ public class MainActivity extends AppCompatActivity {
                                 public void onDismissed(Snackbar transientBottomBar, int event) {
                                     super.onDismissed(transientBottomBar, event);
                                     loading = false;
-                                    mAdapter.addFooter();
                                 }
                             }).show();
                         }
                     }
-                }, 1500);
+                }, 1000);
 
                 loading = true;
             }
         }
     };
-    private int color = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,19 +94,9 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         Logger.addLogAdapter(new AndroidLogAdapter());
 
-        initData();
-        initView();
+        updateUI();
     }
 
-    private void initData() {
-        data = new ArrayList<>();
-        for (int i = 1; i <= 20; i++) {
-            data.add(i + "");
-        }
-
-        insertData = "0";
-        loadTimes = 0;
-    }
 
     @OnClick({R.id.fab, R.id.btnToControl})
     public void onViewClicked(View view) {
@@ -111,8 +104,6 @@ public class MainActivity extends AppCompatActivity {
             case R.id.fab: {
                 Intent intent = new Intent(MainActivity.this, AddConnActivity.class);
                 startActivity(intent);
-                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) mRecyclerView.getLayoutManager();
-                mAdapter.addItem(linearLayoutManager.findFirstVisibleItemPosition() + 1, insertData);
                 break;
             }
             case R.id.btnToControl: {
@@ -123,14 +114,30 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void initToolBar() {
-        //使 Toolbar 取代原本的 actionbar
-        setSupportActionBar(toolbar);
-        toolbar.setTitle("MqttClient Home");
+    /**
+     * 使用 Model 观察数据变化，更新 UI
+     */
+    private void updateUI() {
+        ConnViewModel model = ViewModelProviders.of(this).get(ConnViewModel.class);
+        model.getConnections().observe(this, conns -> {
+            // update UI
+            connections = conns;
+            initView();
+            // 连接数
+            tvConnNum.setText(String.valueOf(connections.size()));
+        });
+    }
+
+    private int getScreenWidthDp() {
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        return (int) (displayMetrics.widthPixels / displayMetrics.density);
     }
 
     private void initView() {
-        initToolBar();
+
+        //使 Toolbar 取代原本的 actionbar
+        setSupportActionBar(toolbar);
+        //toolbar.setTitle("MQTTClient");
 
         if (getScreenWidthDp() >= 1200) {
             final GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
@@ -146,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
         mAdapter = new RecyclerViewAdapter(this);
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.addHeader();
-        mAdapter.setItems(data);
+        mAdapter.setItems(connections);
         mAdapter.addFooter();
 
         ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(mAdapter);
@@ -166,17 +173,11 @@ public class MainActivity extends AppCompatActivity {
                         mAdapter.setColor(++color);
                         swipeRefreshLayout.setRefreshing(false);
                     }
-                }, 2000);
+                }, 1000);
 
             }
         });
         mRecyclerView.addOnScrollListener(scrollListener);
     }
-
-    private int getScreenWidthDp() {
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        return (int) (displayMetrics.widthPixels / displayMetrics.density);
-    }
-
 
 }

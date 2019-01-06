@@ -8,7 +8,7 @@
     <string name="tv_recycler_item_3">Drag up or down to move it</string>
     <string name="title_activity_share_view">Share View</string>
     <string name="share_view_press_it">You can press it</string>
-    <string name="no_more_data">No more data</string>
+    <string name="no_more_data">All Data loaded</string>
     <string name="item_swipe_dismissed">Deleted</string>
     <string name="item_swipe_undo">Undo</string>
 

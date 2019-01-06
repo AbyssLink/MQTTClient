@@ -20,20 +20,11 @@ public class SubscriptionDao extends AbstractDao<Subscription, Long> {
 
     public static final String TABLENAME = "SUBSCRIPTION";
 
-    public SubscriptionDao(DaoConfig config) {
-        super(config);
-    }
-
-
-    public SubscriptionDao(DaoConfig config, DaoSession daoSession) {
-        super(config, daoSession);
-    }
-
     /**
      * Creates the underlying database table.
      */
     public static void createTable(Database db, boolean ifNotExists) {
-        String constraint = ifNotExists ? "IF NOT EXISTS " : "";
+        String constraint = ifNotExists ? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"SUBSCRIPTION\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
                 "\"CONN_ID\" INTEGER," + // 1: connId
@@ -43,9 +34,16 @@ public class SubscriptionDao extends AbstractDao<Subscription, Long> {
                 "\"JSON_KEY\" TEXT);"); // 5: jsonKey
     }
 
-    /**
-     * Drops the underlying database table.
-     */
+
+    public SubscriptionDao(DaoConfig config) {
+        super(config);
+    }
+
+    public SubscriptionDao(DaoConfig config, DaoSession daoSession) {
+        super(config, daoSession);
+    }
+
+    /** Drops the underlying database table. */
     public static void dropTable(Database db, boolean ifExists) {
         String sql = "DROP TABLE " + (ifExists ? "IF EXISTS " : "") + "\"SUBSCRIPTION\"";
         db.execSQL(sql);
@@ -140,6 +138,12 @@ public class SubscriptionDao extends AbstractDao<Subscription, Long> {
     }
 
     @Override
+    protected final Long updateKeyAfterInsert(Subscription entity, long rowId) {
+        entity.setId(rowId);
+        return rowId;
+    }
+     
+    @Override
     public void readEntity(Cursor cursor, Subscription entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setConnId(cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1));
@@ -148,7 +152,7 @@ public class SubscriptionDao extends AbstractDao<Subscription, Long> {
         entity.setIsNumber(cursor.isNull(offset + 4) ? null : cursor.getShort(offset + 4) != 0);
         entity.setJsonKey(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
      }
-     
+    
     @Override
     public Long getKey(Subscription entity) {
         if (entity != null) {
@@ -157,13 +161,7 @@ public class SubscriptionDao extends AbstractDao<Subscription, Long> {
             return null;
         }
     }
-
-    @Override
-    protected final Long updateKeyAfterInsert(Subscription entity, long rowId) {
-        entity.setId(rowId);
-        return rowId;
-    }
-
+    
     /**
      * Properties of entity Subscription.<br/>
      * Can be used for QueryBuilder and for referencing column names.

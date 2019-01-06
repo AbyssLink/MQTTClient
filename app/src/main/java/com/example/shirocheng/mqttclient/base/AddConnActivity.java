@@ -2,10 +2,12 @@ package com.example.shirocheng.mqttclient.base;
 
 import android.os.Bundle;
 import android.support.design.button.MaterialButton;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import com.example.shirocheng.mqttclient.R;
 import com.example.shirocheng.mqttclient.bean.Connection;
@@ -56,13 +58,21 @@ public class AddConnActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.submit_button)
-    public void onViewClicked() {
-        Connection conn = new Connection();
-        conn = getConnection();
+    public void onViewClicked(View view) {
+        Connection insertData = new Connection();
+        insertData = getConnection();
 
         // 写入数据库
-        DaoHelper.getInstance().addConnection(conn);
+        if (insertData != null) {
+            DaoHelper.getInstance().addConnection(insertData);
+            Snackbar.make(view, "Success create connection",
+                    Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+        } else {
+            Snackbar.make(view, "Failed create connection",
+                    Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+        }
 
+        insertData = null;
     }
 
     private Connection getConnection() {
@@ -84,9 +94,12 @@ public class AddConnActivity extends AppCompatActivity {
             conn.setServerPort(port);
             conn.setUserName(username);
             conn.setPassword(password);
+
+            return conn;
+        } else {
+            return null;
         }
 
-        return conn;
     }
 
     private boolean validateInput(String clientId, String serverIp, String port) {

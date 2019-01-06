@@ -20,20 +20,11 @@ public class ConnectionDao extends AbstractDao<Connection, Long> {
 
     public static final String TABLENAME = "CONNECTION";
 
-    public ConnectionDao(DaoConfig config) {
-        super(config);
-    }
-
-
-    public ConnectionDao(DaoConfig config, DaoSession daoSession) {
-        super(config, daoSession);
-    }
-
     /**
      * Creates the underlying database table.
      */
     public static void createTable(Database db, boolean ifNotExists) {
-        String constraint = ifNotExists ? "IF NOT EXISTS " : "";
+        String constraint = ifNotExists ? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"CONNECTION\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
                 "\"CLIENT_ID\" TEXT," + // 1: clientId
@@ -43,9 +34,16 @@ public class ConnectionDao extends AbstractDao<Connection, Long> {
                 "\"PASSWORD\" TEXT);"); // 5: password
     }
 
-    /**
-     * Drops the underlying database table.
-     */
+
+    public ConnectionDao(DaoConfig config) {
+        super(config);
+    }
+
+    public ConnectionDao(DaoConfig config, DaoSession daoSession) {
+        super(config, daoSession);
+    }
+
+    /** Drops the underlying database table. */
     public static void dropTable(Database db, boolean ifExists) {
         String sql = "DROP TABLE " + (ifExists ? "IF EXISTS " : "") + "\"CONNECTION\"";
         db.execSQL(sql);
@@ -140,6 +138,12 @@ public class ConnectionDao extends AbstractDao<Connection, Long> {
     }
 
     @Override
+    protected final Long updateKeyAfterInsert(Connection entity, long rowId) {
+        entity.setId(rowId);
+        return rowId;
+    }
+     
+    @Override
     public void readEntity(Cursor cursor, Connection entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setClientId(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
@@ -148,7 +152,7 @@ public class ConnectionDao extends AbstractDao<Connection, Long> {
         entity.setUserName(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
         entity.setPassword(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
      }
-     
+    
     @Override
     public Long getKey(Connection entity) {
         if (entity != null) {
@@ -157,13 +161,7 @@ public class ConnectionDao extends AbstractDao<Connection, Long> {
             return null;
         }
     }
-
-    @Override
-    protected final Long updateKeyAfterInsert(Connection entity, long rowId) {
-        entity.setId(rowId);
-        return rowId;
-    }
-
+    
     /**
      * Properties of entity Connection.<br/>
      * Can be used for QueryBuilder and for referencing column names.

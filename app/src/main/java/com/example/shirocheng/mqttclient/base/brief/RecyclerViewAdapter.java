@@ -13,12 +13,15 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.shirocheng.mqttclient.R;
 import com.example.shirocheng.mqttclient.base.DetailViewActivity;
+import com.example.shirocheng.mqttclient.bean.Connection;
+import com.example.shirocheng.mqttclient.db.DaoHelper;
 import com.example.shirocheng.mqttclient.interf.onMoveAndSwipedListener;
 
 import java.util.ArrayList;
@@ -30,10 +33,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private final int TYPE_NORMAL = 1;
     private final int TYPE_FOOTER = 2;
     private final int TYPE_HEADER = 3;
-    private final String FOOTER = "footer";
-    private final String HEADER = "header";
+    private final Connection FOOTER = new Connection(null, "FOOTER", null, null, null, null);
+    private final Connection HEADER = new Connection(null, "HEADER", null, null, null, null);
     private Context context;
-    private List<String> mItems;
+    private List<Connection> mItems;
     private int color = 0;
     private View parentView;
 
@@ -42,17 +45,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         mItems = new ArrayList();
     }
 
-    public void setItems(List<String> data) {
+    public void setItems(List<Connection> data) {
         this.mItems.addAll(data);
         notifyDataSetChanged();
     }
 
-    public void addItem(int position, String insertData) {
+    public void addItem(int position, Connection insertData) {
         mItems.add(position, insertData);
         notifyItemInserted(position);
     }
 
-    public void addItems(List<String> data) {
+    public void addItems(List<Connection> data) {
         mItems.add(HEADER);
         mItems.addAll(data);
         notifyItemInserted(mItems.size() - 1);
@@ -69,8 +72,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public void removeFooter() {
-        mItems.remove(mItems.size() - 1);
-        notifyItemRemoved(mItems.size());
+        if (mItems.get(mItems.size() - 1).getClientId().equals("FOOTER")) {
+            mItems.remove(mItems.size() - 1);
+            notifyItemRemoved(mItems.size());
+        }
     }
 
     public void setColor(int color) {
@@ -94,10 +99,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int i) {
 
-        if (holder instanceof RecyclerViewHolder) {
-            final RecyclerViewHolder recyclerViewHolder = (RecyclerViewHolder) holder;
+        if (viewHolder instanceof RecyclerViewHolder) {
+            final RecyclerViewHolder recyclerViewHolder = (RecyclerViewHolder) viewHolder;
 
             Animation animation = AnimationUtils.loadAnimation(context, R.anim.anim_recycler_item_show);
             recyclerViewHolder.mView.startAnimation(animation);
@@ -122,25 +127,32 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
 
             recyclerViewHolder.rela_round.startAnimation(aa);
-            recyclerViewHolder.mView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(context, DetailViewActivity.class);
-                    intent.putExtra("color", color);
-                    context.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation
-                            ((Activity) context, recyclerViewHolder.rela_round, "shareView").toBundle());
-                }
+            recyclerViewHolder.mView.setOnClickListener(view -> {
+                Intent intent = new Intent(context, DetailViewActivity.class);
+                intent.putExtra("color", color);
+                context.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation
+                        ((Activity) context, recyclerViewHolder.rela_round, "shareView").toBundle());
             });
+
+            // 设置视图内容
+            Connection conn = mItems.get(i);
+            if (conn != null) {
+                ((RecyclerViewHolder) viewHolder).tv_conn_name.setText(conn.getClientId());
+                ((RecyclerViewHolder) viewHolder).tv_conn_ip.setText(conn.getServerIp());
+            }
         }
     }
 
     @Override
     public int getItemViewType(int position) {
-        String s = mItems.get(position);
-        switch (s) {
-            case HEADER:
+        Connection s = mItems.get(position);
+        if (s == null) {
+            return TYPE_NORMAL;
+        }
+        switch (s.getClientId()) {
+            case "HEADER":
                 return TYPE_HEADER;
-            case FOOTER:
+            case "FOOTER":
                 return TYPE_FOOTER;
             default:
                 return TYPE_NORMAL;
@@ -157,11 +169,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public boolean onItemMove(int fromPosition, int toPosition) {
         Collections.swap(mItems, fromPosition, toPosition);
         notifyItemMoved(fromPosition, toPosition);
+
         return true;
     }
 
     @Override
     public void onItemDismiss(final int position) {
+
+        // 数据库操作
+        Connection item = mItems.get(position);
+        DaoHelper.getInstance().removeConnById(item.getId());
+
         mItems.remove(position);
         notifyItemRemoved(position);
 
@@ -173,11 +191,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private class RecyclerViewHolder extends RecyclerView.ViewHolder {
         private View mView;
         private RelativeLayout rela_round;
+        private TextView tv_conn_name;
+        private TextView tv_conn_ip;
+        private ImageView ic_active;
 
         private RecyclerViewHolder(View itemView) {
             super(itemView);
             mView = itemView;
             rela_round = itemView.findViewById(R.id.rela_round);
+            tv_conn_name = itemView.findViewById(R.id.tv_conn_name);
+            tv_conn_ip = itemView.findViewById(R.id.tv_conn_ip);
+            ic_active = itemView.findViewById(R.id.ic_active);
         }
     }
 
@@ -198,4 +222,5 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             header_text = itemView.findViewById(R.id.header_text);
         }
     }
+
 }
