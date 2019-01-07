@@ -14,7 +14,6 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -33,13 +32,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private final int TYPE_NORMAL = 1;
     private final int TYPE_FOOTER = 2;
     private final int TYPE_HEADER = 3;
-    private final Connection FOOTER = new Connection(null, "FOOTER", null, null, null, null);
-    private final Connection HEADER = new Connection(null, "HEADER", null, null, null, null);
     private Context context;
     private List<Connection> mItems;
     private int color = 1;
     private View parentView;         // todo: 修复parentview onResume时为null
     private Box<Connection> connectionBox;
+    private onItemDismissListener listener;
 
     public RecyclerViewAdapter(Context context) {
         this.context = context;
@@ -47,6 +45,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public void setItems(List<Connection> data) {
+        this.mItems.clear();
         this.mItems.addAll(data);
         notifyDataSetChanged();
     }
@@ -57,26 +56,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public void addItems(List<Connection> data) {
-        mItems.add(HEADER);
         mItems.addAll(data);
         notifyItemInserted(mItems.size() - 1);
-    }
-
-    public void addHeader() {
-        this.mItems.add(HEADER);
-        notifyItemInserted(mItems.size() - 1);
-    }
-
-    public void addFooter() {
-        mItems.add(FOOTER);
-        notifyItemInserted(mItems.size() - 1);
-    }
-
-    public void removeFooter() {
-        if (mItems.get(mItems.size() - 1).getClientId().equals("FOOTER")) {
-            mItems.remove(mItems.size() - 1);
-            notifyItemRemoved(mItems.size());
-        }
     }
 
     public void setColor(int color) {
@@ -87,16 +68,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         parentView = parent;
-        if (viewType == TYPE_NORMAL) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_brief_linear, parent, false);
-            return new RecyclerViewHolder(view);
-        } else if (viewType == TYPE_FOOTER) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_recycler_footer, parent, false);
-            return new FooterViewHolder(view);
-        } else {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_recycler_header, parent, false);
-            return new HeaderViewHolder(view);
-        }
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_brief_linear, parent, false);
+        return new RecyclerViewHolder(view);
     }
 
     @Override
@@ -142,38 +115,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 context.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation
                         ((Activity) context, recyclerViewHolder.rela_round, "shareView").toBundle());
             });
-            recyclerViewHolder.setOnItemDismissListener(new OnMoveAndSwipedListener() {
-                @Override
-                public boolean onItemMove(int fromPosition, int toPosition) {
-                    return false;
-                }
-
-                @Override
-                public void onItemDismiss(int position) {
-                    mItems.remove(position);
-                    notifyItemRemoved(position);
-
-                    Snackbar.make(parentView, context.getString(R.string.item_swipe_dismissed), Snackbar.LENGTH_SHORT)
-                            .setAction(context.getString(R.string.item_swipe_undo), v -> addItem(position, mItems.get(position))).show();
-                }
-            });
         }
     }
 
     @Override
     public int getItemViewType(int position) {
         Connection s = mItems.get(position);
-        if (s == null) {
-            return TYPE_NORMAL;
-        }
-        switch (s.getClientId()) {
-            case "HEADER":
-                return TYPE_HEADER;
-            case "FOOTER":
-                return TYPE_FOOTER;
-            default:
-                return TYPE_NORMAL;
-        }
+        return TYPE_NORMAL;
     }
 
     @Override
@@ -199,7 +147,20 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         Snackbar.make(parentView, context.getString(R.string.item_swipe_dismissed), Snackbar.LENGTH_SHORT)
                 .setAction(context.getString(R.string.item_swipe_undo), v -> addItem(position, mItems.get(position))).show();
 
+        // todo: 理解接口回调
+        if (listener != null) {
+            listener.onDeleteData(position);
+        }
     }
+
+    public void setOnItemDismissListener(onItemDismissListener listener) {
+        this.listener = listener;
+    }
+
+    public interface onItemDismissListener {
+        void onDeleteData(int position);
+    }
+
 
     private class RecyclerViewHolder extends RecyclerView.ViewHolder {
         private View mView;
@@ -207,7 +168,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private TextView tv_conn_name;
         private TextView tv_conn_ip;
         private ImageView ic_active;
-        private OnMoveAndSwipedListener listener;
 
         private RecyclerViewHolder(View itemView) {
             super(itemView);
@@ -216,28 +176,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             tv_conn_name = itemView.findViewById(R.id.tv_conn_name);
             tv_conn_ip = itemView.findViewById(R.id.tv_conn_ip);
             ic_active = itemView.findViewById(R.id.ic_active);
-        }
-
-        public void setOnItemDismissListener(OnMoveAndSwipedListener listener) {
-            this.listener = listener;
-        }
-    }
-
-    private class FooterViewHolder extends RecyclerView.ViewHolder {
-        private ProgressBar progress_bar_load_more;
-
-        private FooterViewHolder(View itemView) {
-            super(itemView);
-            progress_bar_load_more = itemView.findViewById(R.id.progress_bar_load_more);
-        }
-    }
-
-    private class HeaderViewHolder extends RecyclerView.ViewHolder {
-        private TextView header_text;
-
-        private HeaderViewHolder(View itemView) {
-            super(itemView);
-            header_text = itemView.findViewById(R.id.header_text);
         }
     }
 

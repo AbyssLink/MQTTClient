@@ -1,13 +1,10 @@
 package com.example.shirocheng.mqttclient.base;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -22,13 +19,10 @@ import android.widget.TextView;
 import com.example.shirocheng.mqttclient.R;
 import com.example.shirocheng.mqttclient.base.model.ConnViewModel;
 import com.example.shirocheng.mqttclient.base.view.ItemTouchHelperCallback;
-import com.example.shirocheng.mqttclient.base.view.OnMoveAndSwipedListener;
 import com.example.shirocheng.mqttclient.bean.Connection;
 import com.example.shirocheng.mqttclient.db.App;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,45 +43,9 @@ public class MainActivity extends AppCompatActivity {
     TextView tvConnNum;
 
     private RecyclerViewAdapter mAdapter;
-    private List<Connection> connections;
-    RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
-        @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-
-            final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-            if (!loading && linearLayoutManager.getItemCount() == (linearLayoutManager.findLastVisibleItemPosition() + 1)) {
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (loadTimes < 1) {
-                            mAdapter.removeFooter();
-                            loading = false;
-                            mAdapter.addItems(connections);
-                            mAdapter.addFooter();
-                            loadTimes++;
-                        } else {
-                            mAdapter.removeFooter();
-                            Snackbar.make(mRecyclerView, getString(R.string.no_more_data), Snackbar.LENGTH_SHORT).setCallback(new Snackbar.Callback() {
-                                @Override
-                                public void onDismissed(Snackbar transientBottomBar, int event) {
-                                    super.onDismissed(transientBottomBar, event);
-                                    loading = false;
-                                }
-                            }).show();
-                        }
-                    }
-                }, 1000);
-
-                loading = true;
-            }
-        }
-    };
-    private boolean loading;
-    private int loadTimes = 1;
     private int color = 0;
     private Box<Connection> connectionBox;
+    private Boolean onDelete = false;
 
     @OnClick({R.id.fab})
     public void onViewClicked(View view) {
@@ -123,16 +81,15 @@ public class MainActivity extends AppCompatActivity {
     public void updateUI() {
         connectionBox = ((App) getApplication()).getBoxStore().boxFor(Connection.class);
         ConnViewModel model = ViewModelProviders.of(this).get(ConnViewModel.class);
-        model.getNoteLiveData(connectionBox).observe(this, new Observer<List<Connection>>() {
-            @Override
-            public void onChanged(@Nullable List<Connection> connections) {
-                // updateUI
-                if (connections != null) {
-                    Logger.w("On Conn Changed", "warn");
-                    mAdapter.setItems(connections);
-                    mAdapter.addFooter();
-                    tvConnNum.setText(String.valueOf(connections.size()));
-                }
+        model.getNoteLiveData(connectionBox).observe(this, connections -> {
+            // updateUI
+            if (onDelete) {           // 若为删除，则recyclerview已有动效，无需更新
+                onDelete = false;
+                tvConnNum.setText(String.valueOf(connections.size()));
+            } else if (connections != null) {
+                Logger.w("On Conn Changed", "warn");
+                mAdapter.setItems(connections);
+                tvConnNum.setText(String.valueOf(connections.size()));
             }
         });
     }
@@ -155,22 +112,12 @@ public class MainActivity extends AppCompatActivity {
 
         mAdapter = new RecyclerViewAdapter(this);
         mRecyclerView.setAdapter(mAdapter);
-        mAdapter.addHeader();
 
-        // 设置监听回调，当触发 item 滑动时，进行数据库操作
-        mAdapter.setOnItemDismissListener(new OnMoveAndSwipedListener() {
-            @Override
-            public boolean onItemMove(int fromPosition, int toPosition) {
-                return false;
-            }
-
-            @Override
-            public void onItemDismiss(int position) {
-                // 数据库操作
-                Connection item = connections.get(position);
-                connectionBox = ((App) getApplication()).getBoxStore().boxFor(Connection.class);
-                connectionBox.remove(item.getId());
-            }
+        // 通过接口回调执行数据库操作
+        mAdapter.setOnItemDismissListener(position -> {
+            onDelete = true;
+            connectionBox = ((App) getApplication()).getBoxStore().boxFor(Connection.class);
+            connectionBox.remove(connectionBox.getAll().get(position).getId());
         });
 
         ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(mAdapter);
@@ -194,6 +141,5 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        mRecyclerView.addOnScrollListener(scrollListener);
     }
 }
