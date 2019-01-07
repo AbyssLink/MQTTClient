@@ -118,7 +118,7 @@ public class MqttHelper {
                     public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                         Logger.w("Failed to connect .... Exception: "
                                 + exception.toString(), "Mqtt");
-
+                        flag = false;
                     }
                 });
             } catch (MqttException ex) {

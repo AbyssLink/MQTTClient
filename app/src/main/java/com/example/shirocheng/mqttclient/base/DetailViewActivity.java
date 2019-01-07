@@ -14,14 +14,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shirocheng.mqttclient.R;
+import com.example.shirocheng.mqttclient.base.model.ConnViewModel;
 import com.example.shirocheng.mqttclient.base.model.MsgViewModel;
 import com.example.shirocheng.mqttclient.bean.Connection;
+import com.example.shirocheng.mqttclient.db.App;
 import com.example.shirocheng.mqttclient.mqtt.MqttHelper;
 import com.orhanobut.logger.Logger;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.objectbox.Box;
 
 public class DetailViewActivity extends AppCompatActivity {
 
@@ -43,8 +46,11 @@ public class DetailViewActivity extends AppCompatActivity {
     MaterialButton btnSubscribe;
     @BindView(R.id.btn_publish)
     MaterialButton btnPublish;
+    @BindView(R.id.tv_conn_activate)
+    TextView tvConnActivate;
 
     private Connection connection;
+    private Box<Connection> connectionBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,16 +58,40 @@ public class DetailViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail_view);
         ButterKnife.bind(this);
 
+        updateUI();
         initView();
     }
 
-    private void updateUI() {
+    private void updateMsgUI() {
+
         MsgViewModel model = ViewModelProviders.of(this).get(MsgViewModel.class);
         model.getSubscription(getApplicationContext()).observe(this, jsonValues -> {
             // update UI
             tvReceive.setText(jsonValues);
             Logger.w(jsonValues, "debug mqtt");
             Toast.makeText(this, jsonValues, Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    private void updateUI() {
+        connectionBox = ((App) getApplication()).getBoxStore().boxFor(Connection.class);
+        ConnViewModel connViewModel = ViewModelProviders.of(this).get(ConnViewModel.class);
+        connViewModel.getConnectionLiveData(connectionBox).observe(this, connections -> {
+            //update UI
+            Intent intent = getIntent();
+            String id = intent.getStringExtra("id");
+            if (!id.equals("")) {
+                connection = connectionBox.get(Long.parseLong(id));
+                tvConnIp.setText(connection.getServerIp());
+                tvConnName.setText(connection.getClientId());
+                if (connection.isActivate()) {
+                    tvConnActivate.setText("YES");
+                    tvConnActivate.setTextColor(getResources().getColor(R.color.google_green));
+                } else {
+                    tvConnActivate.setText("NO");
+                    tvConnActivate.setTextColor(getResources().getColor(R.color.google_red));
+                }
+            }
         });
     }
 
@@ -74,10 +104,7 @@ public class DetailViewActivity extends AppCompatActivity {
 
         if (getIntent() != null) {
             Intent intent = getIntent();
-            String ip = intent.getStringExtra("ip");
-            String clientId = intent.getStringExtra("clientId");
             int color = intent.getIntExtra("color", 1);
-
             if (color == 1) {
                 relaRoundBig.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.google_green)));
             } else if (color == 2) {
@@ -87,14 +114,6 @@ public class DetailViewActivity extends AppCompatActivity {
             } else if (color == 4) {
                 relaRoundBig.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.google_blue)));
             }
-
-            tvConnIp.setText(ip);
-            tvConnName.setText(clientId);
-
-            connection = new Connection();
-            connection.setClientId(clientId);
-            connection.setServerIp(ip);
-            connection.setServerPort("1883");
         }
     }
 
@@ -103,7 +122,7 @@ public class DetailViewActivity extends AppCompatActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_publish: {
-                String pubMsg = "okokok from MI phone";
+                String pubMsg = "OK OK from MI phone";
                 Boolean flag = MqttHelper.getInstance()
                         .publishTopic("hello", pubMsg);
                 if (flag) {
@@ -115,14 +134,23 @@ public class DetailViewActivity extends AppCompatActivity {
             case R.id.btn_connect: {
                 MqttHelper.getInstance().createConnect(getApplicationContext(), connection);
                 Boolean flag = MqttHelper.getInstance().doConnect();
-                if (flag) {
+                if (flag) {     //连接成功
+                    // 更新连接状态
+                    connection.setActivate(true);
+                    connectionBox.put(connection);
                     Snackbar.make(view, "Success Connect to: " + connection.getServerIp(),
+                            Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                } else {        //连接失败
+                    // 更新连接状态
+                    connection.setActivate(false);
+                    connectionBox.put(connection);
+                    Snackbar.make(view, "Connect failed, check ip address",
                             Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 }
                 break;
             }
             case R.id.btn_subscribe: {
-                updateUI();
+                updateMsgUI();
                 break;
             }
         }

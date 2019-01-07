@@ -98,6 +98,7 @@ public class AddConnActivity extends AppCompatActivity {
             conn.setServerPort(port);
             conn.setUserName(username);
             conn.setPassword(password);
+            conn.setActivate(false);    //新创建时默认为未激活
 
             return conn;
         } else {

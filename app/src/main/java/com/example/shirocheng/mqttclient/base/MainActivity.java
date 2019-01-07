@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
     public void updateUI() {
         connectionBox = ((App) getApplication()).getBoxStore().boxFor(Connection.class);
         ConnViewModel model = ViewModelProviders.of(this).get(ConnViewModel.class);
-        model.getNoteLiveData(connectionBox).observe(this, connections -> {
+        model.getConnectionLiveData(connectionBox).observe(this, connections -> {
             // updateUI
             if (onDelete) {           // 若为删除，则recyclerview已有动效，无需更新
                 onDelete = false;

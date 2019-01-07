@@ -14,7 +14,7 @@ public class ConnViewModel extends ViewModel {
 
     private ObjectBoxLiveData<Connection> noteLiveData;
 
-    public ObjectBoxLiveData<Connection> getNoteLiveData(Box<Connection> connectionBox) {
+    public ObjectBoxLiveData<Connection> getConnectionLiveData(Box<Connection> connectionBox) {
         if (noteLiveData == null) {
             // query all notes, sorted a-z by their text (https://docs.objectbox.io/queries)
             noteLiveData = new ObjectBoxLiveData<>(connectionBox.query().build());

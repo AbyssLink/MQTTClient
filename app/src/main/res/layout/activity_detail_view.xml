@@ -47,10 +47,9 @@
         card_view:cardElevation="4dp">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
             <RelativeLayout
                 android:id="@+id/rela_round_big"
@@ -60,7 +59,99 @@
                 android:layout_margin="@dimen/share_view_round_margin"
                 android:background="@drawable/ic_cloud_blue_big"
                 android:transitionName="shareView" />
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="vertical">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/text_margin_small"
+                            android:text="Client ID: "
+                            android:textAlignment="center"
+                            android:textSize="16dp" />
+
+                        <TextView
+                            android:id="@+id/tv_conn_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/text_margin_small"
+                            android:text="xxxxxxxxxxx"
+                            android:textAlignment="center"
+                            android:textSize="16dp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/text_margin_small"
+                            android:text="Server IP: "
+                            android:textAlignment="center"
+                            android:textSize="16dp" />
+
+                        <TextView
+                            android:id="@+id/tv_conn_ip"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/text_margin_small"
+                            android:layout_weight="1"
+                            android:lines="1"
+                            android:text="xxx.xxx.xxx.xxx"
+                            android:textAlignment="center"
+                            android:textSize="16dp" />
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/text_margin_small"
+                            android:text="activate?"
+                            android:textAlignment="center"
+                            android:textSize="16dp" />
+
+                        <TextView
+                            android:id="@+id/tv_conn_activate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/text_margin_small"
+                            android:text="NO"
+                            android:textColor="@color/google_red"
+                            android:textSize="16dp" />
+
+                    </LinearLayout>
+                </LinearLayout>
+            </RelativeLayout>
+
         </LinearLayout>
+
 
     </android.support.v7.widget.CardView>
 
@@ -74,54 +165,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:weightSum="3">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/text_margin"
-                    android:layout_weight="1"
-                    android:text="Server IP: "
-                    android:textSize="16dp" />
-
-                <TextView
-                    android:id="@+id/tv_conn_ip"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/text_margin"
-                    android:layout_weight="2"
-                    android:textSize="16dp" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:weightSum="3">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/text_margin"
-                    android:layout_marginRight="@dimen/text_margin"
-                    android:layout_weight="1"
-                    android:text="Client ID: "
-                    android:textSize="16dp" />
-
-                <TextView
-                    android:id="@+id/tv_conn_name"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/text_margin"
-                    android:layout_marginRight="@dimen/text_margin"
-                    android:layout_weight="2"
-                    android:textSize="16dp" />
-
-            </LinearLayout>
 
             <android.support.design.button.MaterialButton
                 android:id="@+id/btn_connect"

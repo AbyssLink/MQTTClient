@@ -34,7 +34,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private final int TYPE_HEADER = 3;
     private Context context;
     private List<Connection> mItems;
-    private int color = 1;
+    private int color = 0;
     private View parentView;         // todo: 修复parentview onResume时为null
     private Box<Connection> connectionBox;
     private onItemDismissListener listener;
@@ -95,7 +95,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             } else if (color == 3) {
                 recyclerViewHolder.rela_round.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.google_red)));
             } else if (color == 4) {
-                recyclerViewHolder.rela_round.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.google_blue)));
+                recyclerViewHolder.rela_round.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.gray)));
             }
 
             // 设置视图内容
@@ -103,6 +103,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             if (conn != null) {
                 ((RecyclerViewHolder) viewHolder).tv_conn_name.setText(conn.getClientId());
                 ((RecyclerViewHolder) viewHolder).tv_conn_ip.setText(conn.getServerIp());
+                if (conn.isActivate() == true) {
+                    ((RecyclerViewHolder) viewHolder).ic_active.setColorFilter(context.getResources().getColor(R.color.google_green));
+                } else {
+                    ((RecyclerViewHolder) viewHolder).ic_active.setColorFilter(context.getResources().getColor(R.color.google_red));
+                }
             }
 
 
@@ -110,8 +115,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             recyclerViewHolder.mView.setOnClickListener(view -> {
                 Intent intent = new Intent(context, DetailViewActivity.class);
                 intent.putExtra("color", color);
-                intent.putExtra("ip", conn.getServerIp());
-                intent.putExtra("clientId", conn.getClientId());
+                intent.putExtra("id", String.valueOf(conn.getId()));
                 context.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation
                         ((Activity) context, recyclerViewHolder.rela_round, "shareView").toBundle());
             });

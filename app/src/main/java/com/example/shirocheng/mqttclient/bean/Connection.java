@@ -14,6 +14,7 @@ public class Connection {
     private String serverPort;  // 主机端口
     private String userName;    // 用户名
     private String password;    // 用户密码
+    private boolean activate;     //是否被激活
 
     public Connection() {
     }
@@ -76,4 +77,11 @@ public class Connection {
         this.password = password;
     }
 
+    public boolean isActivate() {
+        return activate;
+    }
+
+    public void setActivate(boolean activate) {
+        this.activate = activate;
+    }
 }
