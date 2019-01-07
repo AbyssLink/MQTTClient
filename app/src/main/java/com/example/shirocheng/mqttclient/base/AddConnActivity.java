@@ -11,11 +11,12 @@ import android.view.View;
 
 import com.example.shirocheng.mqttclient.R;
 import com.example.shirocheng.mqttclient.bean.Connection;
-import com.example.shirocheng.mqttclient.db.DaoHelper;
+import com.example.shirocheng.mqttclient.db.App;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.objectbox.Box;
 
 public class AddConnActivity extends AppCompatActivity {
 
@@ -40,6 +41,8 @@ public class AddConnActivity extends AppCompatActivity {
     @BindView(R.id.til_port)
     TextInputLayout tilPort;
 
+    private Box<Connection> connectionBox;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +50,7 @@ public class AddConnActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         initView();
+
     }
 
     private void initView() {
@@ -64,15 +68,15 @@ public class AddConnActivity extends AppCompatActivity {
 
         // 写入数据库
         if (insertData != null) {
-            DaoHelper.getInstance().addConnection(insertData);
+            //todo
+            connectionBox = ((App) getApplication()).getBoxStore().boxFor(Connection.class);
+            connectionBox.put(getConnection());
             Snackbar.make(view, "Success create connection",
                     Snackbar.LENGTH_SHORT).setAction("Action", null).show();
         } else {
             Snackbar.make(view, "Failed create connection",
                     Snackbar.LENGTH_SHORT).setAction("Action", null).show();
         }
-
-        insertData = null;
     }
 
     private Connection getConnection() {

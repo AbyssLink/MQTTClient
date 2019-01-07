@@ -1,11 +1,11 @@
-package com.example.shirocheng.mqttclient.base.brief;
+package com.example.shirocheng.mqttclient.base.model;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.content.Context;
 
-import com.example.shirocheng.mqttclient.MqttHelper;
+import com.example.shirocheng.mqttclient.mqtt.MqttHelper;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;

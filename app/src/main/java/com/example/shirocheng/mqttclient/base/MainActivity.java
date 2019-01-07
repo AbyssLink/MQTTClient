@@ -1,9 +1,11 @@
 package com.example.shirocheng.mqttclient.base;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -18,10 +20,11 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.shirocheng.mqttclient.R;
-import com.example.shirocheng.mqttclient.base.brief.ConnViewModel;
-import com.example.shirocheng.mqttclient.base.brief.RecyclerViewAdapter;
+import com.example.shirocheng.mqttclient.base.model.ConnViewModel;
 import com.example.shirocheng.mqttclient.base.view.ItemTouchHelperCallback;
+import com.example.shirocheng.mqttclient.base.view.OnMoveAndSwipedListener;
 import com.example.shirocheng.mqttclient.bean.Connection;
+import com.example.shirocheng.mqttclient.db.App;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
 
@@ -30,6 +33,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.objectbox.Box;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,9 +50,6 @@ public class MainActivity extends AppCompatActivity {
 
     private RecyclerViewAdapter mAdapter;
     private List<Connection> connections;
-    private boolean loading;
-    private int loadTimes = 1;
-    private int color = 0;
     RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -83,17 +84,10 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
-        Logger.addLogAdapter(new AndroidLogAdapter());
-
-        updateUI();
-    }
-
+    private boolean loading;
+    private int loadTimes = 1;
+    private int color = 0;
+    private Box<Connection> connectionBox;
 
     @OnClick({R.id.fab})
     public void onViewClicked(View view) {
@@ -106,19 +100,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * 使用 Model 观察数据变化，更新 UI
-     */
-    public void updateUI() {
-        ConnViewModel model = ViewModelProviders.of(this).get(ConnViewModel.class);
-        model.getConnections().observe(this, conns -> {
-            // update UI
-            connections = conns;
-            initView();
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
+        Logger.addLogAdapter(new AndroidLogAdapter());
 
-            // 连接数
-            tvConnNum.setText(String.valueOf(connections.size()));
-        });
+        initView();
+
+        updateUI();
     }
 
     private int getScreenWidthDp() {
@@ -126,11 +117,30 @@ public class MainActivity extends AppCompatActivity {
         return (int) (displayMetrics.widthPixels / displayMetrics.density);
     }
 
+    /**
+     * 使用 Model 观察数据变化，更新 UI
+     */
+    public void updateUI() {
+        connectionBox = ((App) getApplication()).getBoxStore().boxFor(Connection.class);
+        ConnViewModel model = ViewModelProviders.of(this).get(ConnViewModel.class);
+        model.getNoteLiveData(connectionBox).observe(this, new Observer<List<Connection>>() {
+            @Override
+            public void onChanged(@Nullable List<Connection> connections) {
+                // updateUI
+                if (connections != null) {
+                    Logger.w("On Conn Changed", "warn");
+                    mAdapter.setItems(connections);
+                    mAdapter.addFooter();
+                    tvConnNum.setText(String.valueOf(connections.size()));
+                }
+            }
+        });
+    }
+
     private void initView() {
 
         //使 Toolbar 取代原本的 actionbar
         setSupportActionBar(toolbar);
-        //toolbar.setTitle("MQTTClient");
 
         if (getScreenWidthDp() >= 1200) {
             final GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
@@ -146,8 +156,22 @@ public class MainActivity extends AppCompatActivity {
         mAdapter = new RecyclerViewAdapter(this);
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.addHeader();
-        mAdapter.setItems(connections);
-        mAdapter.addFooter();
+
+        // 设置监听回调，当触发 item 滑动时，进行数据库操作
+        mAdapter.setOnItemDismissListener(new OnMoveAndSwipedListener() {
+            @Override
+            public boolean onItemMove(int fromPosition, int toPosition) {
+                return false;
+            }
+
+            @Override
+            public void onItemDismiss(int position) {
+                // 数据库操作
+                Connection item = connections.get(position);
+                connectionBox = ((App) getApplication()).getBoxStore().boxFor(Connection.class);
+                connectionBox.remove(item.getId());
+            }
+        });
 
         ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(mAdapter);
         ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(callback);
@@ -172,5 +196,4 @@ public class MainActivity extends AppCompatActivity {
         });
         mRecyclerView.addOnScrollListener(scrollListener);
     }
-
 }

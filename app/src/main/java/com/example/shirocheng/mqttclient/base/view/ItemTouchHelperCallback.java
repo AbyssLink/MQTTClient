@@ -4,8 +4,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
-import com.example.shirocheng.mqttclient.interf.onMoveAndSwipedListener;
-
 
 /**
  * REf: https://github.com/Eajy/MaterialDesignDemo
@@ -14,9 +12,9 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     private final int TYPE_NORMAL = 1;
 
-    private onMoveAndSwipedListener moveAndSwipedListener;
+    private OnMoveAndSwipedListener moveAndSwipedListener;
 
-    public ItemTouchHelperCallback(onMoveAndSwipedListener listener) {
+    public ItemTouchHelperCallback(OnMoveAndSwipedListener listener) {
         this.moveAndSwipedListener = listener;
     }
 

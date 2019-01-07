@@ -1,13 +1,12 @@
 package com.example.shirocheng.mqttclient.bean;
 
-import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Generated;
-import org.greenrobot.greendao.annotation.Id;
+import io.objectbox.annotation.Entity;
+import io.objectbox.annotation.Id;
 
 @Entity
 public class Connection {
 
-    @Id(autoincrement = true)
+    @Id
     private Long id;    // 主键自增
 
     private String clientId;    // 设备uuid, 也作为名称在视图显示
@@ -16,11 +15,9 @@ public class Connection {
     private String userName;    // 用户名
     private String password;    // 用户密码
 
-    @Generated(hash = 1735801874)
     public Connection() {
     }
 
-    @Generated(hash = 1789591368)
     public Connection(Long id, String clientId, String serverIp, String serverPort,
                       String userName, String password) {
         this.id = id;

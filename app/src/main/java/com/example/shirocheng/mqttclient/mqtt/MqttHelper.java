@@ -1,4 +1,4 @@
-package com.example.shirocheng.mqttclient;
+package com.example.shirocheng.mqttclient.mqtt;
 
 import android.content.Context;
 
@@ -28,6 +28,7 @@ public class MqttHelper {
     private MqttConnectOptions mqttConnectOptions;
     private String subTopic;
     private String pubTopic;
+    boolean flag = false;
 
 
     /**
@@ -98,7 +99,6 @@ public class MqttHelper {
      * @return
      */
     public boolean doConnect() {
-        boolean flag = false;
         if (mqttAndroidClient != null) {
             try {
                 mqttAndroidClient.connect(mqttConnectOptions, null, new IMqttActionListener() {
@@ -111,6 +111,7 @@ public class MqttHelper {
                         disconnectedBufferOptions.setDeleteOldestMessages(false);
                         mqttAndroidClient.setBufferOpts(disconnectedBufferOptions);
                         Logger.w("Success to connect to broker", "Mqtt");
+                        flag = true;
                     }
 
                     @Override
@@ -120,7 +121,6 @@ public class MqttHelper {
 
                     }
                 });
-                flag = true;
             } catch (MqttException ex) {
                 ex.printStackTrace();
             }

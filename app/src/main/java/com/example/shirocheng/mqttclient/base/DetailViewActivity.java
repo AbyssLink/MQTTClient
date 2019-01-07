@@ -13,10 +13,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.shirocheng.mqttclient.MqttHelper;
 import com.example.shirocheng.mqttclient.R;
-import com.example.shirocheng.mqttclient.base.brief.MsgViewModel;
+import com.example.shirocheng.mqttclient.base.model.MsgViewModel;
 import com.example.shirocheng.mqttclient.bean.Connection;
+import com.example.shirocheng.mqttclient.mqtt.MqttHelper;
 import com.orhanobut.logger.Logger;
 
 import butterknife.BindView;

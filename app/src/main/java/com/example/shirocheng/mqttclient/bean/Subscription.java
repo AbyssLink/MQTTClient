@@ -1,13 +1,12 @@
 package com.example.shirocheng.mqttclient.bean;
 
-import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Generated;
-import org.greenrobot.greendao.annotation.Id;
+import io.objectbox.annotation.Entity;
+import io.objectbox.annotation.Id;
 
 @Entity
 public class Subscription {
 
-    @Id(autoincrement = true)
+    @Id
     private Long id;    // 主键自增
 
     private Long connId;    // 所属连接的主键
@@ -16,11 +15,9 @@ public class Subscription {
     private Boolean isNumber;   // 是否为数字
     private String jsonKey;     // json解包后的键，用于取值
 
-    @Generated(hash = 1800298428)
     public Subscription() {
     }
 
-    @Generated(hash = 460237087)
     public Subscription(Long id, Long connId, String name, String topic, Boolean isNumber, String jsonKey) {
         this.id = id;
         this.connId = connId;

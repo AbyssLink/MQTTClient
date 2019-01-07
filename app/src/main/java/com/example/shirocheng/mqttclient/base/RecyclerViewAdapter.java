@@ -1,4 +1,4 @@
-package com.example.shirocheng.mqttclient.base.brief;
+package com.example.shirocheng.mqttclient.base;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
@@ -19,16 +19,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.shirocheng.mqttclient.R;
-import com.example.shirocheng.mqttclient.base.DetailViewActivity;
+import com.example.shirocheng.mqttclient.base.view.OnMoveAndSwipedListener;
 import com.example.shirocheng.mqttclient.bean.Connection;
-import com.example.shirocheng.mqttclient.db.DaoHelper;
-import com.example.shirocheng.mqttclient.interf.onMoveAndSwipedListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements onMoveAndSwipedListener {
+import io.objectbox.Box;
+
+public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements OnMoveAndSwipedListener {
 
     private final int TYPE_NORMAL = 1;
     private final int TYPE_FOOTER = 2;
@@ -38,7 +38,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private Context context;
     private List<Connection> mItems;
     private int color = 1;
-    private View parentView;
+    private View parentView;         // todo: 修复parentview onResume时为null
+    private Box<Connection> connectionBox;
 
     public RecyclerViewAdapter(Context context) {
         this.context = context;
@@ -141,6 +142,21 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 context.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation
                         ((Activity) context, recyclerViewHolder.rela_round, "shareView").toBundle());
             });
+            recyclerViewHolder.setOnItemDismissListener(new OnMoveAndSwipedListener() {
+                @Override
+                public boolean onItemMove(int fromPosition, int toPosition) {
+                    return false;
+                }
+
+                @Override
+                public void onItemDismiss(int position) {
+                    mItems.remove(position);
+                    notifyItemRemoved(position);
+
+                    Snackbar.make(parentView, context.getString(R.string.item_swipe_dismissed), Snackbar.LENGTH_SHORT)
+                            .setAction(context.getString(R.string.item_swipe_undo), v -> addItem(position, mItems.get(position))).show();
+                }
+            });
         }
     }
 
@@ -177,22 +193,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public void onItemDismiss(final int position) {
 
-        // 数据库操作
-        Connection item = mItems.get(position);
-        DaoHelper.getInstance().removeConnById(item.getId());
-
         mItems.remove(position);
         notifyItemRemoved(position);
 
         Snackbar.make(parentView, context.getString(R.string.item_swipe_dismissed), Snackbar.LENGTH_SHORT)
                 .setAction(context.getString(R.string.item_swipe_undo), v -> addItem(position, mItems.get(position))).show();
 
-        // 通知更新 UI todo: 优化
-        View vp = (View) parentView.getParent().getParent();
-        TextView tvConnNum = vp.findViewById(R.id.tv_conn_num);
-        tvConnNum.setText(String.valueOf(DaoHelper.getInstance().loadAllConn().size()));
     }
-
 
     private class RecyclerViewHolder extends RecyclerView.ViewHolder {
         private View mView;
@@ -200,6 +207,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private TextView tv_conn_name;
         private TextView tv_conn_ip;
         private ImageView ic_active;
+        private OnMoveAndSwipedListener listener;
 
         private RecyclerViewHolder(View itemView) {
             super(itemView);
@@ -208,6 +216,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             tv_conn_name = itemView.findViewById(R.id.tv_conn_name);
             tv_conn_ip = itemView.findViewById(R.id.tv_conn_ip);
             ic_active = itemView.findViewById(R.id.ic_active);
+        }
+
+        public void setOnItemDismissListener(OnMoveAndSwipedListener listener) {
+            this.listener = listener;
         }
     }
 
