@@ -3,7 +3,6 @@ package com.example.shirocheng.mqttclient.base.model;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
-import android.content.Context;
 
 import com.example.shirocheng.mqttclient.mqtt.MqttHelper;
 
@@ -17,45 +16,43 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 public class MsgViewModel extends ViewModel {
     private MutableLiveData<String> jsonValues;
 
-    public LiveData<String> getSubscription(Context mContext) {
+    public LiveData<String> getSubscription() {
         if (jsonValues == null) {
             jsonValues = new MutableLiveData<>();
-            loadJsonValues(mContext);
+            loadJsonValues();
         }
         return jsonValues;
     }
 
-    private void loadJsonValues(Context mContext) {
+    private void loadJsonValues() {
         // Do an asynchronous operation to fetch jsonValues.
-        startMqtt(mContext);
+        startMqtt();
     }
 
-    private void startMqtt(Context mContext) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                MqttHelper.getInstance().setCallBack(new MqttCallbackExtended() {
-                    @Override
-                    public void connectComplete(boolean b, String s) {
-                    }
+    private void startMqtt() {
+        new Thread(() -> {
+            MqttHelper.getInstance().setCallBack(new MqttCallbackExtended() {
+                @Override
+                public void connectComplete(boolean b, String s) {
+                }
 
-                    @Override
-                    public void connectionLost(Throwable throwable) {
-                    }
+                @Override
+                public void connectionLost(Throwable throwable) {
+                }
 
-                    @Override
-                    public void messageArrived(String topic, MqttMessage mqttMessage) {
-                        String message = mqttMessage.toString();
-                        jsonValues.postValue(message);
-                    }
+                @Override
+                public void messageArrived(String topic, MqttMessage mqttMessage) {
+                    String message = mqttMessage.toString();
+                    jsonValues.postValue(message);
+                }
 
-                    @Override
-                    public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
+                @Override
+                public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
 
-                    }
-                });
-                MqttHelper.getInstance().subscribeTopic("DHT11");
-            }
+                }
+            });
+
+
         }).start();
     }
 }

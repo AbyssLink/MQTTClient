@@ -4,28 +4,30 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
-import android.support.design.button.MaterialButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.shirocheng.mqttclient.R;
 import com.example.shirocheng.mqttclient.base.model.ConnViewModel;
-import com.example.shirocheng.mqttclient.base.model.MsgViewModel;
 import com.example.shirocheng.mqttclient.bean.Connection;
 import com.example.shirocheng.mqttclient.db.App;
 import com.example.shirocheng.mqttclient.mqtt.MqttHelper;
-import com.orhanobut.logger.Logger;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import io.objectbox.Box;
 
 public class ControlActivity extends AppCompatActivity {
@@ -38,21 +40,16 @@ public class ControlActivity extends AppCompatActivity {
     TextView tvConnIp;
     @BindView(R.id.tv_conn_name)
     TextView tvConnName;
-    @BindView(R.id.tv_receive)
-    TextView tvReceive;
-    @BindView(R.id.btn_connect)
-    MaterialButton btnConnect;
-    @BindView(R.id.btn_subscribe)
-    MaterialButton btnSubscribe;
-    @BindView(R.id.btn_publish)
-    MaterialButton btnPublish;
     @BindView(R.id.tv_conn_activate)
     TextView tvConnActivate;
-    @BindView(R.id.btn_disconnect)
-    MaterialButton btnDisconnect;
+    @BindView(R.id.tabLayout)
+    TabLayout tabLayout;
+    @BindView(R.id.view_pager)
+    ViewPager viewPager;
 
     private Connection connection;
     private Box<Connection> connectionBox;
+    private List<String> titles;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,17 +59,6 @@ public class ControlActivity extends AppCompatActivity {
 
         updateUI();
         initView();
-    }
-
-    private void updateMsgUI() {
-
-        MsgViewModel model = ViewModelProviders.of(this).get(MsgViewModel.class);
-        model.getSubscription(getApplicationContext()).observe(this, jsonValues -> {
-            // update UI
-            tvReceive.setText(jsonValues);
-            Logger.w(jsonValues, "debug mqtt");
-            Toast.makeText(this, jsonValues, Toast.LENGTH_SHORT).show();
-        });
     }
 
     private void updateUI() {
@@ -117,57 +103,67 @@ public class ControlActivity extends AppCompatActivity {
                 relaRoundBig.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.google_blue)));
             }
         }
+
+        initViewPager(viewPager);
     }
 
+    private void initViewPager(ViewPager viewPager) {
 
-    @OnClick({R.id.btn_publish, R.id.btn_connect, R.id.btn_subscribe, R.id.btn_disconnect})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.btn_publish: {
-                String pubMsg = "OK OK from MI phone";
-                Boolean flag = MqttHelper.getInstance()
-                        .publishTopic("hello", pubMsg);
-                if (flag) {
-                    Snackbar.make(view, "Publish: " + pubMsg,
-                            Snackbar.LENGTH_SHORT).setAction("Action", null).show();
-                }
-                break;
-            }
-            case R.id.btn_connect: {
-                MqttHelper.getInstance().createConnect(getApplicationContext(), connection);
-                Boolean flag = MqttHelper.getInstance().doConnect();
-                if (flag) {     //连接成功
-                    // 更新连接状态
-                    connection.setActivate(true);
-                    connectionBox.put(connection);
-                    Snackbar.make(view, "Success Connect to: " + connection.getServerIp(),
-                            Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                } else {        //连接失败
-                    // 更新连接状态
-                    connection.setActivate(false);
-                    connectionBox.put(connection);
-                    Snackbar.make(view, "Connect Failed, Check IP Address or Network",
-                            Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                }
-                break;
-            }
-            case R.id.btn_subscribe: {
-                updateMsgUI();
-                break;
-            }
-            case R.id.btn_disconnect: {
-                try {
-                    MqttHelper.getInstance().disConnect();
-                    // 更新连接状态
-                    connection.setActivate(false);
-                    connectionBox.put(connection);
-                    Snackbar.make(view, "Disconnected",
-                            Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                } catch (MqttException e) {
-                    e.printStackTrace();
-                }
-                break;
+        tabLayout.setupWithViewPager(viewPager);
+
+        List<Fragment> fragments = new ArrayList<>();
+        fragments.add(new AddSubscribeFragment());
+        fragments.add(new AddPublishFragment());
+
+        titles = new ArrayList<>();
+        titles.add("Subscribe");
+        titles.add("Publish");
+        MyFragmentAdapter adapter = new MyFragmentAdapter(getSupportFragmentManager(), fragments, titles);
+        viewPager.setAdapter(adapter);
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.connect_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_connect) {
+            MqttHelper.getInstance().createConnect(getApplicationContext(), connection);
+            Boolean flag = MqttHelper.getInstance().doConnect();
+            if (flag) {     //连接成功
+                // 更新连接状态
+                connection.setActivate(true);
+                connectionBox.put(connection);
+                Snackbar.make(tabLayout, "Success Connect to: " + connection.getServerIp(),
+                        Snackbar.LENGTH_LONG).setAction("Action", null).show();
+            } else {        //连接失败
+                // 更新连接状态
+                connection.setActivate(false);
+                connectionBox.put(connection);
+                Snackbar.make(tabLayout, "Connect Failed, Check IP Address or Network",
+                        Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
         }
+
+        if (id == R.id.action_disconnect) {
+            try {
+                MqttHelper.getInstance().disConnect();
+                // 更新连接状态
+                connection.setActivate(false);
+                connectionBox.put(connection);
+                Snackbar.make(tabLayout, "Disconnected",
+                        Snackbar.LENGTH_LONG).setAction("Action", null).show();
+            } catch (MqttException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
