@@ -21,17 +21,17 @@ import com.example.shirocheng.mqttclient.db.App;
 import com.example.shirocheng.mqttclient.mqtt.MqttHelper;
 import com.orhanobut.logger.Logger;
 
+import org.eclipse.paho.client.mqttv3.MqttException;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.objectbox.Box;
 
-public class DetailViewActivity extends AppCompatActivity {
+public class ControlActivity extends AppCompatActivity {
 
     @BindView(R.id.toolbar_back)
     Toolbar toolbar;
-    @BindView(R.id.tv_share_view_tip)
-    TextView tvShareViewTip;
     @BindView(R.id.rela_round_big)
     RelativeLayout relaRoundBig;
     @BindView(R.id.tv_conn_ip)
@@ -48,6 +48,8 @@ public class DetailViewActivity extends AppCompatActivity {
     MaterialButton btnPublish;
     @BindView(R.id.tv_conn_activate)
     TextView tvConnActivate;
+    @BindView(R.id.btn_disconnect)
+    MaterialButton btnDisconnect;
 
     private Connection connection;
     private Box<Connection> connectionBox;
@@ -55,7 +57,7 @@ public class DetailViewActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail_view);
+        setContentView(R.layout.activity_control);
         ButterKnife.bind(this);
 
         updateUI();
@@ -86,10 +88,10 @@ public class DetailViewActivity extends AppCompatActivity {
                 tvConnName.setText(connection.getClientId());
                 if (connection.isActivate()) {
                     tvConnActivate.setText("YES");
-                    tvConnActivate.setTextColor(getResources().getColor(R.color.google_green));
+                    tvConnActivate.setBackground(getResources().getDrawable(R.drawable.tv_round_green));
                 } else {
                     tvConnActivate.setText("NO");
-                    tvConnActivate.setTextColor(getResources().getColor(R.color.google_red));
+                    tvConnActivate.setBackground(getResources().getDrawable(R.drawable.tv_round_red));
                 }
             }
         });
@@ -118,7 +120,7 @@ public class DetailViewActivity extends AppCompatActivity {
     }
 
 
-    @OnClick({R.id.btn_publish, R.id.btn_connect, R.id.btn_subscribe})
+    @OnClick({R.id.btn_publish, R.id.btn_connect, R.id.btn_subscribe, R.id.btn_disconnect})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_publish: {
@@ -144,13 +146,26 @@ public class DetailViewActivity extends AppCompatActivity {
                     // 更新连接状态
                     connection.setActivate(false);
                     connectionBox.put(connection);
-                    Snackbar.make(view, "Connect failed, check ip address",
+                    Snackbar.make(view, "Connect Failed, Check IP Address or Network",
                             Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 }
                 break;
             }
             case R.id.btn_subscribe: {
                 updateMsgUI();
+                break;
+            }
+            case R.id.btn_disconnect: {
+                try {
+                    MqttHelper.getInstance().disConnect();
+                    // 更新连接状态
+                    connection.setActivate(false);
+                    connectionBox.put(connection);
+                    Snackbar.make(view, "Disconnected",
+                            Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                } catch (MqttException e) {
+                    e.printStackTrace();
+                }
                 break;
             }
         }

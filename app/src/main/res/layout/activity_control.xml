@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.shirocheng.mqttclient.base.DetailViewActivity">
+    tools:context="com.example.shirocheng.mqttclient.base.ControlActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar_share_view"
@@ -19,17 +19,6 @@
             android:background="@color/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
     </android.support.design.widget.AppBarLayout>
-
-    <TextView
-        android:id="@+id/tv_share_view_tip"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="@dimen/text_margin_small"
-        android:text="Detail Page"
-        android:textColor="@color/colorPrimary" />
-
 
     <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/tools"
         android:id="@+id/card_share_view"
@@ -76,12 +65,12 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/text_margin_small"
                         android:orientation="horizontal">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_margin="@dimen/text_margin_small"
                             android:text="Client ID: "
                             android:textAlignment="center"
                             android:textSize="16dp" />
@@ -90,7 +79,7 @@
                             android:id="@+id/tv_conn_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_margin="@dimen/text_margin_small"
+                            android:layout_marginLeft="4dp"
                             android:text="xxxxxxxxxxx"
                             android:textAlignment="center"
                             android:textSize="16dp" />
@@ -100,12 +89,12 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/text_margin_small"
                         android:orientation="horizontal">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_margin="@dimen/text_margin_small"
                             android:text="Server IP: "
                             android:textAlignment="center"
                             android:textSize="16dp" />
@@ -114,7 +103,6 @@
                             android:id="@+id/tv_conn_ip"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_margin="@dimen/text_margin_small"
                             android:layout_weight="1"
                             android:lines="1"
                             android:text="xxx.xxx.xxx.xxx"
@@ -127,23 +115,27 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/text_margin_small"
+
                         android:orientation="horizontal">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_margin="@dimen/text_margin_small"
                             android:text="activate?"
                             android:textAlignment="center"
                             android:textSize="16dp" />
 
                         <TextView
                             android:id="@+id/tv_conn_activate"
+                            android:layout_marginLeft="@dimen/text_margin"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_margin="@dimen/text_margin_small"
+                            android:background="@drawable/tv_round_red"
+                            android:paddingLeft="@dimen/text_margin"
+                            android:paddingRight="@dimen/text_margin"
                             android:text="NO"
-                            android:textColor="@color/google_red"
+                            android:textColor="@color/white"
                             android:textSize="16dp" />
 
                     </LinearLayout>
@@ -176,14 +168,15 @@
                 android:textColor="@color/white" />
 
             <android.support.design.button.MaterialButton
-                android:id="@+id/btn_subscribe"
+                android:id="@+id/btn_disconnect"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/btn_margin"
                 android:layout_marginRight="@dimen/btn_margin"
                 android:background="@color/colorPrimary"
-                android:text="Subscribe"
+                android:text="Disconnect"
                 android:textColor="@color/white" />
+
 
             <android.support.design.button.MaterialButton
                 android:id="@+id/btn_publish"
@@ -193,6 +186,17 @@
                 android:background="@color/colorPrimary"
                 android:text="Publish"
                 android:textColor="@color/white" />
+
+            <android.support.design.button.MaterialButton
+                android:id="@+id/btn_subscribe"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/btn_margin"
+                android:layout_marginRight="@dimen/btn_margin"
+                android:background="@color/colorPrimary"
+                android:text="Subscribe"
+                android:textColor="@color/white" />
+
 
             <TextView
                 android:id="@+id/tv_receive"

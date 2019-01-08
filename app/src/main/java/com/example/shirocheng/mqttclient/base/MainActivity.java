@@ -5,7 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -41,11 +44,16 @@ public class MainActivity extends AppCompatActivity {
     SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.tv_conn_num)
     TextView tvConnNum;
+    @BindView(R.id.nav_view)
+    NavigationView navView;
+    @BindView(R.id.drawer_layout)
+    DrawerLayout mDrawerLayout;
 
     private RecyclerViewAdapter mAdapter;
     private int color = 0;
     private Box<Connection> connectionBox;
     private Boolean onDelete = false;
+
 
     @OnClick({R.id.fab})
     public void onViewClicked(View view) {
@@ -99,6 +107,19 @@ public class MainActivity extends AppCompatActivity {
         //使 Toolbar 取代原本的 actionbar
         setSupportActionBar(toolbar);
 
+        // Set up the navigation drawer.
+        mDrawerLayout.setStatusBarBackground(R.color.colorPrimaryDark);
+        if (navView != null) {
+            setupDrawerContent(navView);
+        }
+
+        // 注册左滑布局触发器
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+        // 颜色改变效果
         if (getScreenWidthDp() >= 1200) {
             final GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
             mRecyclerView.setLayoutManager(gridLayoutManager);
@@ -141,5 +162,35 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void setupDrawerContent(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(
+                menuItem -> {
+                    switch (menuItem.getItemId()) {
+                        case R.id.setting_navigation_menu_item: {
+                            // Do nothing
+                            break;
+                        }
+                        case R.id.backup_navigation_menu_item: {
+                            Intent intent =
+                                    new Intent(MainActivity.this, AddConnActivity.class);
+                            startActivity(intent);
+                            break;
+                        }
+                        case R.id.about_navigation_menu_item: {
+                            break;
+                        }
+                        case R.id.history_navigation_menu_item: {
+                            break;
+                        }
+                        default:
+                            break;
+                    }
+                    // Close the navigation drawer when an item is selected.
+                    menuItem.setChecked(true);
+                    mDrawerLayout.closeDrawers();
+                    return true;
+                });
     }
 }

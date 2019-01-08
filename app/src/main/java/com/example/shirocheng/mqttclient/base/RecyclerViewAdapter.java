@@ -96,6 +96,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 recyclerViewHolder.rela_round.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.google_red)));
             } else if (color == 4) {
                 recyclerViewHolder.rela_round.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.gray)));
+            } else {
+                recyclerViewHolder.rela_round.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.google_blue)));
             }
 
             // 设置视图内容
@@ -113,7 +115,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             recyclerViewHolder.rela_round.startAnimation(aa);
             recyclerViewHolder.mView.setOnClickListener(view -> {
-                Intent intent = new Intent(context, DetailViewActivity.class);
+                Intent intent = new Intent(context, ControlActivity.class);
                 intent.putExtra("color", color);
                 intent.putExtra("id", String.valueOf(conn.getId()));
                 context.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation
