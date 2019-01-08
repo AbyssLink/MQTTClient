@@ -4,9 +4,11 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -23,14 +25,11 @@ import com.example.shirocheng.mqttclient.mqtt.MqttHelper;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.objectbox.Box;
 
-public class ControlActivity extends AppCompatActivity {
+public class ControlActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
 
     @BindView(R.id.toolbar_back)
     Toolbar toolbar;
@@ -42,14 +41,16 @@ public class ControlActivity extends AppCompatActivity {
     TextView tvConnName;
     @BindView(R.id.tv_conn_activate)
     TextView tvConnActivate;
-    @BindView(R.id.tabLayout)
-    TabLayout tabLayout;
     @BindView(R.id.view_pager)
     ViewPager viewPager;
+    @BindView(R.id.navigation_bottom)
+    BottomNavigationView navigationBottom;
 
     private Connection connection;
     private Box<Connection> connectionBox;
-    private List<String> titles;
+    private AddPublishFragment addPublishFragment = new AddPublishFragment();
+    private AddSubscribeFragment addSubscribeFragment = new AddSubscribeFragment();
+    private DashboardFragment dashboardFragment = new DashboardFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,27 +62,16 @@ public class ControlActivity extends AppCompatActivity {
         initView();
     }
 
-    private void updateUI() {
-        connectionBox = ((App) getApplication()).getBoxStore().boxFor(Connection.class);
-        ConnViewModel connViewModel = ViewModelProviders.of(this).get(ConnViewModel.class);
-        connViewModel.getConnectionLiveData(connectionBox).observe(this, connections -> {
-            //update UI
-            Intent intent = getIntent();
-            String id = intent.getStringExtra("id");
-            if (!id.equals("")) {
-                connection = connectionBox.get(Long.parseLong(id));
-                tvConnIp.setText(connection.getServerIp());
-                tvConnName.setText(connection.getClientId());
-                if (connection.isActivate()) {
-                    tvConnActivate.setText("YES");
-                    tvConnActivate.setBackground(getResources().getDrawable(R.drawable.tv_round_green));
-                } else {
-                    tvConnActivate.setText("NO");
-                    tvConnActivate.setBackground(getResources().getDrawable(R.drawable.tv_round_red));
-                }
-            }
-        });
-    }
+    private BottomNavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+            //点击BottomNavigationView的Item项，切换ViewPager页面
+            //menu/navigation.xml里加的android:orderInCategory属性就是下面item.getOrder()取的值
+            viewPager.setCurrentItem(menuItem.getOrder());
+            return true;
+        }
+    };
 
     private void initView() {
         //使 Toolbar 取代原本的 actionbar
@@ -107,25 +97,59 @@ public class ControlActivity extends AppCompatActivity {
         initViewPager(viewPager);
     }
 
+    private void updateUI() {
+        connectionBox = ((App) getApplication()).getBoxStore().boxFor(Connection.class);
+        ConnViewModel connViewModel = ViewModelProviders.of(this).get(ConnViewModel.class);
+        connViewModel.getConnectionLiveData(connectionBox).observe(this, connections -> {
+            //update UI
+            Intent intent = getIntent();
+            String id = intent.getStringExtra("id");
+            if (!id.equals("")) {
+                connection = connectionBox.get(Long.parseLong(id));
+                tvConnIp.setText(connection.getServerIp());
+                tvConnName.setText(connection.getClientId());
+                if (connection.isActivate()) {
+                    tvConnActivate.setText("ON");
+                    tvConnActivate.setBackground(getResources().getDrawable(R.drawable.tv_round_green));
+                } else {
+                    tvConnActivate.setText("OFF");
+                    tvConnActivate.setBackground(getResources().getDrawable(R.drawable.tv_round_red));
+                }
+            }
+        });
+    }
+
+    // bottom navigation + viewpager 参考：https://tomoya92.github.io/2017/04/05/android-bottomnavigationview-viewpager-fragment/
     private void initViewPager(ViewPager viewPager) {
 
-        tabLayout.setupWithViewPager(viewPager);
+        //添加viewPager事件监听（很容易忘）
+        viewPager.addOnPageChangeListener(this);
+        navigationBottom.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
+        viewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
+            @Override
+            public Fragment getItem(int i) {
+                switch (i) {
+                    case 0:
+                        return addSubscribeFragment;
+                    case 1:
+                        return addPublishFragment;
+                    case 2:
+                        return dashboardFragment;
+                }
+                return null;
+            }
 
-        List<Fragment> fragments = new ArrayList<>();
-        fragments.add(new AddSubscribeFragment());
-        fragments.add(new AddPublishFragment());
-
-        titles = new ArrayList<>();
-        titles.add("Subscribe");
-        titles.add("Publish");
-        MyFragmentAdapter adapter = new MyFragmentAdapter(getSupportFragmentManager(), fragments, titles);
-        viewPager.setAdapter(adapter);
+            @Override
+            public int getCount() {
+                return 3;
+            }
+        });
 
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.connect_menu, menu);
+        getMenuInflater().inflate(R.menu.menu_connect, menu);
         return true;
     }
 
@@ -140,13 +164,13 @@ public class ControlActivity extends AppCompatActivity {
                 // 更新连接状态
                 connection.setActivate(true);
                 connectionBox.put(connection);
-                Snackbar.make(tabLayout, "Success Connect to: " + connection.getServerIp(),
+                Snackbar.make(tvConnName, "Success Connect to: " + connection.getServerIp(),
                         Snackbar.LENGTH_LONG).setAction("Action", null).show();
             } else {        //连接失败
                 // 更新连接状态
                 connection.setActivate(false);
                 connectionBox.put(connection);
-                Snackbar.make(tabLayout, "Connect Failed, Check IP Address or Network",
+                Snackbar.make(tvConnName, "Connect Failed, Check IP Address or Network",
                         Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
         }
@@ -157,7 +181,7 @@ public class ControlActivity extends AppCompatActivity {
                 // 更新连接状态
                 connection.setActivate(false);
                 connectionBox.put(connection);
-                Snackbar.make(tabLayout, "Disconnected",
+                Snackbar.make(tvConnName, "Disconnected",
                         Snackbar.LENGTH_LONG).setAction("Action", null).show();
             } catch (MqttException e) {
                 e.printStackTrace();
@@ -165,5 +189,21 @@ public class ControlActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onPageScrolled(int i, float v, int i1) {
+
+    }
+
+    @Override
+    public void onPageSelected(int i) {
+        //页面滑动的时候，改变BottomNavigationView的Item高亮
+        navigationBottom.getMenu().getItem(i).setChecked(true);
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int i) {
+
     }
 }

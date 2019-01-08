@@ -39,7 +39,6 @@
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/edit_text_clientid"
                     android:layout_width="match_parent"
-                    android:text="Test client"
                     android:layout_height="wrap_content"
                     android:hint="ClientId" />
 

@@ -16,6 +16,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.DisplayMetrics;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -192,5 +194,25 @@ public class MainActivity extends AppCompatActivity {
                     mDrawerLayout.closeDrawers();
                     return true;
                 });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_more, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_backup) {
+
+        } else if (id == R.id.action_history) {
+
+        } else if (id == R.id.action_settings) {
+
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

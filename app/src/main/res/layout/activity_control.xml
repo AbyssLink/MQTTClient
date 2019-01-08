@@ -68,39 +68,24 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/text_margin_small"
                         android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Client ID: "
-                            android:textAlignment="center"
-                            android:textSize="14dp" />
 
                         <TextView
                             android:id="@+id/tv_conn_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="4dp"
-                            android:text="xxxxxxxxxxx"
+                            android:text="xxxxxxx"
+                            android:textColor="@color/black"
                             android:textAlignment="center"
-                            android:textSize="14dp" />
+                            android:textSize="20dp" />
 
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/text_margin_small"
+                        android:layout_marginTop="@dimen/text_margin_small"
                         android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Server IP: "
-                            android:textAlignment="center"
-                            android:textSize="14dp" />
 
                         <TextView
                             android:id="@+id/tv_conn_ip"
@@ -110,7 +95,7 @@
                             android:lines="1"
                             android:text="xxx.xxx.xxx.xxx"
                             android:textAlignment="center"
-                            android:textSize="14dp" />
+                            android:textSize="16dp" />
 
                     </LinearLayout>
 
@@ -118,26 +103,17 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/text_margin_small"
-
+                        android:layout_marginTop="@dimen/text_margin_small"
                         android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="activate?"
-                            android:textAlignment="center"
-                            android:textSize="14dp" />
 
                         <TextView
                             android:id="@+id/tv_conn_activate"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/text_margin"
                             android:background="@drawable/tv_round_red"
                             android:paddingLeft="@dimen/text_margin"
                             android:paddingRight="@dimen/text_margin"
-                            android:text="NO"
+                            android:text="OFF"
                             android:textColor="@color/white"
                             android:textSize="14dp" />
 
@@ -167,32 +143,22 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <android.support.design.widget.TabLayout
-                    android:id="@+id/tabLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:theme="@style/AppTheme"
-                    app:tabTextColor="@color/colorPrimary">
-
-                    <android.support.design.widget.TabItem
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Subscribe" />
-
-                    <android.support.design.widget.TabItem
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Publish" />
-
-                </android.support.design.widget.TabLayout>
-
                 <android.support.v4.view.ViewPager
                     android:id="@+id/view_pager"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
                     android:theme="@style/AppTheme">
 
                 </android.support.v4.view.ViewPager>
+
+                <android.support.design.widget.BottomNavigationView
+                    android:id="@+id/navigation_bottom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:background="?android:attr/windowBackground"
+                    app:menu="@menu/menu_navigation_bottom" />
 
             </LinearLayout>
 

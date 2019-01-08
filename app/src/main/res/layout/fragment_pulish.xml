@@ -49,7 +49,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/btn_margin"
         android:layout_marginRight="@dimen/btn_margin"
-        android:background="@color/colorPrimary"
+        android:background="@drawable/sp_round_blue"
         android:text="Publish"
         android:textColor="@color/white" />
 
