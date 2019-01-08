@@ -31,13 +31,21 @@
         <service android:name="org.eclipse.paho.android.service.MqttService" />
 
         <activity
-            android:name=".base.AddConnActivity"
+            android:name=".base.add.AddConnActivity"
             android:label="add connection"
             android:parentActivityName=".base.MainActivity" />
         <activity
             android:name=".base.ControlActivity"
             android:label="Control"
-            android:parentActivityName=".base.MainActivity"></activity>
+            android:parentActivityName=".base.MainActivity" />
+        <activity
+            android:name=".base.add.AddPubActivity"
+            android:label="add publish"
+            android:parentActivityName=".base.ControlActivity"></activity>
+        <activity
+            android:name=".base.add.AddSubActivity"
+            android:label="add subscribe"
+            android:parentActivityName=".base.ControlActivity"></activity>
     </application>
 
 </manifest>

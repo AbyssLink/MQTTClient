@@ -8,18 +8,18 @@ import io.objectbox.Box;
 import io.objectbox.android.ObjectBoxLiveData;
 
 /**
- * 该 Model 用于绑定 Conn 变化
+ * 绑定 Conn 变化
  */
 public class ConnViewModel extends ViewModel {
 
-    private ObjectBoxLiveData<Connection> noteLiveData;
+    private ObjectBoxLiveData<Connection> connLiveData;
 
     public ObjectBoxLiveData<Connection> getConnectionLiveData(Box<Connection> connectionBox) {
-        if (noteLiveData == null) {
+        if (connLiveData == null) {
             // query all notes, sorted a-z by their text (https://docs.objectbox.io/queries)
-            noteLiveData = new ObjectBoxLiveData<>(connectionBox.query().build());
+            connLiveData = new ObjectBoxLiveData<>(connectionBox.query().build());
         }
-        return noteLiveData;
+        return connLiveData;
     }
 
 }

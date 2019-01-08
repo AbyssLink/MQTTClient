@@ -1,4 +1,4 @@
-package com.example.shirocheng.mqttclient.base;
+package com.example.shirocheng.mqttclient.base.add;
 
 import android.os.Bundle;
 import android.support.design.button.MaterialButton;
@@ -63,8 +63,7 @@ public class AddConnActivity extends AppCompatActivity {
 
     @OnClick(R.id.submit_button)
     public void onViewClicked(View view) {
-        Connection insertData = new Connection();
-        insertData = getConnection();
+        Connection insertData = getConnection();
 
         // 写入数据库
         if (insertData != null) {

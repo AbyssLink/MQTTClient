@@ -1,56 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_pub"
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/activity_background"
+        android:paddingStart="@dimen/zero_horizontal_margin_big_activity"
+        android:paddingEnd="@dimen/zero_horizontal_margin_big_activity" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_pub_add"
+        style="@style/AppTheme"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:weightSum="2">
+        android:layout_gravity="end|bottom"
+        android:layout_margin="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/ic_add_white_24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.977"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/recycler_pub"
+        app:layout_constraintVertical_bias="1.0" />
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/til_pub_topic"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin_small"
-            android:layout_weight="1">
-
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/et_pub_topic"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="out topic" />
-
-        </android.support.design.widget.TextInputLayout>
-
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/til_pub_msg"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin_small"
-            android:layout_weight="1">
-
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/et_pub_msg"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="pub msg" />
-
-        </android.support.design.widget.TextInputLayout>
-
-    </LinearLayout>
-
-
-    <android.support.design.button.MaterialButton
-        android:id="@+id/btn_publish"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/btn_margin"
-        android:layout_marginRight="@dimen/btn_margin"
-        android:background="@drawable/sp_round_blue"
-        android:text="Publish"
-        android:textColor="@color/white" />
-
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

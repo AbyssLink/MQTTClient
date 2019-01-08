@@ -22,6 +22,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.shirocheng.mqttclient.R;
+import com.example.shirocheng.mqttclient.base.add.AddConnActivity;
 import com.example.shirocheng.mqttclient.base.model.ConnViewModel;
 import com.example.shirocheng.mqttclient.base.view.ItemTouchHelperCallback;
 import com.example.shirocheng.mqttclient.bean.Connection;
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
 
-    private RecyclerViewAdapter mAdapter;
+    private RecyclerConnAdapter mAdapter;
     private int color = 0;
     private Box<Connection> connectionBox;
     private Boolean onDelete = false;
@@ -133,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
             mRecyclerView.setLayoutManager(linearLayoutManager);
         }
 
-        mAdapter = new RecyclerViewAdapter(this);
+        mAdapter = new RecyclerConnAdapter(this);
         mRecyclerView.setAdapter(mAdapter);
 
         // 通过接口回调执行数据库操作

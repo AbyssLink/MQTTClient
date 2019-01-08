@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 
 import com.example.shirocheng.mqttclient.R;
 
-public class DashboardFragment extends Fragment {
+public class BriefDashFragment extends Fragment {
 
     @Nullable
     @Override

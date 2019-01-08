@@ -27,7 +27,7 @@ import java.util.List;
 
 import io.objectbox.Box;
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements OnMoveAndSwipedListener {
+public class RecyclerConnAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements OnMoveAndSwipedListener {
 
     private final int TYPE_NORMAL = 1;
     private final int TYPE_FOOTER = 2;
@@ -39,7 +39,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private Box<Connection> connectionBox;
     private onItemDismissListener listener;
 
-    public RecyclerViewAdapter(Context context) {
+    public RecyclerConnAdapter(Context context) {
         this.context = context;
         mItems = new ArrayList();
     }

@@ -48,9 +48,9 @@ public class ControlActivity extends AppCompatActivity implements ViewPager.OnPa
 
     private Connection connection;
     private Box<Connection> connectionBox;
-    private AddPublishFragment addPublishFragment = new AddPublishFragment();
-    private AddSubscribeFragment addSubscribeFragment = new AddSubscribeFragment();
-    private DashboardFragment dashboardFragment = new DashboardFragment();
+    private BriefPubFragment briefPubFragment = new BriefPubFragment();
+    private BriefSubFragment briefSubFragment = new BriefSubFragment();
+    private BriefDashFragment briefDashFragment = new BriefDashFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,7 +104,7 @@ public class ControlActivity extends AppCompatActivity implements ViewPager.OnPa
             //update UI
             Intent intent = getIntent();
             String id = intent.getStringExtra("id");
-            if (!id.equals("")) {
+            if (id != null) {
                 connection = connectionBox.get(Long.parseLong(id));
                 tvConnIp.setText(connection.getServerIp());
                 tvConnName.setText(connection.getClientId());
@@ -130,11 +130,11 @@ public class ControlActivity extends AppCompatActivity implements ViewPager.OnPa
             public Fragment getItem(int i) {
                 switch (i) {
                     case 0:
-                        return addSubscribeFragment;
+                        return briefSubFragment;
                     case 1:
-                        return addPublishFragment;
+                        return briefPubFragment;
                     case 2:
-                        return dashboardFragment;
+                        return briefDashFragment;
                 }
                 return null;
             }
