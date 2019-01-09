@@ -1,56 +1,24 @@
 package com.example.shirocheng.mqttclient.base.model;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
-import com.example.shirocheng.mqttclient.mqtt.MqttHelper;
+import com.example.shirocheng.mqttclient.bean.Msg;
 
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
+import io.objectbox.Box;
+import io.objectbox.android.ObjectBoxLiveData;
 
 /**
  * 该 Model 获取实时的 Mqtt 消息
  */
 public class MsgViewModel extends ViewModel {
-    private MutableLiveData<String> jsonValues = null;
+    private ObjectBoxLiveData<Msg> msgLiveData;
 
-    public LiveData<String> getSubscriptionMsg() {
-        if (jsonValues == null) {
-            jsonValues = new MutableLiveData<>();
-            loadJsonValues();
+    public ObjectBoxLiveData<Msg> getMsgLiveData(Box<Msg> msgBox) {
+        if (msgLiveData == null) {
+            // query all notes, sorted a-z by their text (https://docs.objectbox.io/queries)
+            msgLiveData = new ObjectBoxLiveData<>(msgBox.query().build());
         }
-        return jsonValues;
+        return msgLiveData;
     }
 
-    private void loadJsonValues() {
-        // Do an asynchronous operation to fetch jsonValues.
-        startMqtt();
-    }
-
-    private void startMqtt() {
-        if (MqttHelper.getInstance() != null) {
-            MqttHelper.getInstance().setCallBack(new MqttCallbackExtended() {
-                @Override
-                public void connectComplete(boolean b, String s) {
-                }
-
-                @Override
-                public void connectionLost(Throwable throwable) {
-                }
-
-                @Override
-                public void messageArrived(String topic, MqttMessage mqttMessage) {
-                    String message = mqttMessage.toString();
-                    jsonValues.setValue(message);
-                }
-
-                @Override
-                public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
-
-                }
-            });
-        }
-    }
 }

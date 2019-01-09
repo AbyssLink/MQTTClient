@@ -7,24 +7,29 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.example.shirocheng.mqttclient.R;
 import com.example.shirocheng.mqttclient.base.add.AddSubActivity;
 import com.example.shirocheng.mqttclient.base.model.MsgViewModel;
 import com.example.shirocheng.mqttclient.base.model.SubViewModel;
 import com.example.shirocheng.mqttclient.bean.Connection;
+import com.example.shirocheng.mqttclient.bean.Msg;
 import com.example.shirocheng.mqttclient.bean.Subscription;
 import com.example.shirocheng.mqttclient.db.App;
 import com.example.shirocheng.mqttclient.mqtt.MqttHelper;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
+
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.util.List;
 
@@ -42,8 +47,8 @@ public class BriefSubFragment extends Fragment {
     @BindView(R.id.fab_sub_add)
     FloatingActionButton fabSubAdd;
     private RecyclerSubAdapter mAdapter;
-    final String[] msg = new String[1];
     private Box<Subscription> subscriptionBox;
+    private Box<Msg> msgBox;
     private Boolean onDelete = false;
 
     @Nullable
@@ -57,6 +62,7 @@ public class BriefSubFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        initMqttConnection();
         initView();
         updateUI();
     }
@@ -116,16 +122,53 @@ public class BriefSubFragment extends Fragment {
         this.connection = connection;
     }
 
-    public void updateMsgUI(Subscription sub) {
+    private void initMqttConnection() {
         MqttHelper.getInstance().createConnect(getContext(), connection);
         MqttHelper.getInstance().doConnect();
-        MsgViewModel model = ViewModelProviders.of(this).get(MsgViewModel.class);
-        model.getSubscriptionMsg().observe(this, jsonValues -> {
-            // update UI
-            Logger.w(jsonValues, "debug mqtt");
-            Toast.makeText(getContext(), jsonValues, Toast.LENGTH_SHORT).show();
+        MqttHelper.getInstance().setCallBack(new MqttCallbackExtended() {
+            @Override
+            public void connectComplete(boolean reconnect, String serverURI) {
+
+            }
+
+            @Override
+            public void connectionLost(Throwable cause) {
+
+            }
+
+            @Override
+            public void messageArrived(String topic, MqttMessage message) throws Exception {
+                // 数据库操作
+                msgBox = ((App) getActivity().getApplication()).getBoxStore().boxFor(Msg.class);
+                Msg msg = new Msg();
+                msg.setMsg(message.toString());
+                msgBox.put(msg);
+            }
+
+            @Override
+            public void deliveryComplete(IMqttDeliveryToken token) {
+
+            }
         });
+    }
+
+    public void updateMsgUI(Subscription sub) {
+
         MqttHelper.getInstance().subscribeTopic(sub.getTopic());
+
+        // 观察数据变化
+        msgBox = ((App) getActivity().getApplication()).getBoxStore().boxFor(Msg.class);
+        MsgViewModel model = ViewModelProviders.of(this).get(MsgViewModel.class);
+        model.getMsgLiveData(msgBox).observe(this, new Observer<List<Msg>>() {
+            @Override
+            public void onChanged(@Nullable List<Msg> msgs) {
+                if (msgs != null) {
+                    if (sub.getJsonKey() != null) {
+                        Snackbar.make(recyclerSub, msgs.get(msgs.size() - 1).getMsg(), Snackbar.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
     }
 
 }
