@@ -24,6 +24,8 @@ import com.example.shirocheng.mqttclient.bean.Msg;
 import com.example.shirocheng.mqttclient.bean.Subscription;
 import com.example.shirocheng.mqttclient.db.App;
 import com.example.shirocheng.mqttclient.mqtt.MqttHelper;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
 
@@ -157,8 +159,12 @@ public class BriefSubFragment extends Fragment {
             @Override
             public void onChanged(@Nullable List<Msg> msgs) {
                 if (msgs != null) {
-                    if (sub.getJsonKey() != null) {
+                    if (sub.getJsonKey() == null) {
                         Snackbar.make(recyclerSub, msgs.get(msgs.size() - 1).getMsg(), Snackbar.LENGTH_SHORT).show();
+                    } else {
+                        String msg = msgs.get(msgs.size() - 1).getMsg();
+                        JsonObject jsonObject = (JsonObject) new JsonParser().parse(msg);
+                        Snackbar.make(recyclerSub, jsonObject.get(sub.getJsonKey()).getAsString(), Snackbar.LENGTH_SHORT).show();
                     }
                 }
             }
