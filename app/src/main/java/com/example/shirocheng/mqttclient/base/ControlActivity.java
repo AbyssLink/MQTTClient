@@ -100,6 +100,7 @@ public class ControlActivity extends AppCompatActivity implements ViewPager.OnPa
             connection = connectionBox.get(Long.parseLong(id));
 
             briefSubFragment.setConnection(connection); // 传数据给fragment
+            briefPubFragment.setConnection(connection);
 
             tvConnIp.setText(connection.getServerIp());
             tvConnName.setText(connection.getClientId());
@@ -123,6 +124,7 @@ public class ControlActivity extends AppCompatActivity implements ViewPager.OnPa
             if (id != null) {
                 connection = connectionBox.get(Long.parseLong(id));
 
+                briefPubFragment.setConnection(connection);
                 briefSubFragment.setConnection(connection); // 传数据给fragment
 
                 tvConnIp.setText(connection.getServerIp());
@@ -184,6 +186,7 @@ public class ControlActivity extends AppCompatActivity implements ViewPager.OnPa
                 connection.setActivate(true);
                 connectionBox.put(connection);
                 briefSubFragment.setConnection(connection);
+                briefPubFragment.setConnection(connection);
                 Snackbar.make(tvConnName, "Success Connect to: " + connection.getServerIp(),
                         Snackbar.LENGTH_LONG).setAction("Action", null).show();
             } else {        //连接失败

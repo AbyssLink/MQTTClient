@@ -1,7 +1,6 @@
 package com.example.shirocheng.mqttclient.base;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -26,6 +25,7 @@ public class RecyclerPubAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private int color = 0;
     private View parentView;         // todo: 修复parentview onResume时为null
     private onItemDismissListener listener;
+    private onItemClickListener onItemClickListener;
 
     public RecyclerPubAdapter(Context context) {
         this.context = context;
@@ -75,9 +75,11 @@ public class RecyclerPubAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
 
             recyclerViewHolder.mView.setOnClickListener(view -> {
-                Intent intent = new Intent(context, ControlActivity.class);
-                intent.putExtra("color", color);
-                intent.putExtra("id", String.valueOf(pub.getId()));
+                Snackbar.make(parentView, "Publish:" + pub.getMsg(), Snackbar.LENGTH_SHORT)
+                        .setAction("Action", null).show();
+                if (onItemClickListener != null) {
+                    onItemClickListener.onPublish(pub);
+                }
             });
         }
     }
@@ -121,8 +123,16 @@ public class RecyclerPubAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.listener = listener;
     }
 
+    public void setOnItemClickListener(onItemClickListener listener) {
+        this.onItemClickListener = listener;
+    }
+
     public interface onItemDismissListener {
         void onDeleteData(int position);
+    }
+
+    public interface onItemClickListener {
+        void onPublish(Publishing pub);
     }
 
 

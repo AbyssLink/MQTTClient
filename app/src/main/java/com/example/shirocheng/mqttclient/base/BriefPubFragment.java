@@ -17,8 +17,10 @@ import android.view.ViewGroup;
 import com.example.shirocheng.mqttclient.R;
 import com.example.shirocheng.mqttclient.base.add.AddPubActivity;
 import com.example.shirocheng.mqttclient.base.model.PubViewModel;
+import com.example.shirocheng.mqttclient.bean.Connection;
 import com.example.shirocheng.mqttclient.bean.Publishing;
 import com.example.shirocheng.mqttclient.db.App;
+import com.example.shirocheng.mqttclient.mqtt.MqttHelper;
 import com.orhanobut.logger.Logger;
 
 import java.util.List;
@@ -38,6 +40,7 @@ public class BriefPubFragment extends Fragment {
     private RecyclerPubAdapter mAdapter;
     private Box<Publishing> publishingBox;
     private Boolean onDelete = false;
+    private static Connection connection = null;
 
     @Nullable
     @Override
@@ -50,7 +53,7 @@ public class BriefPubFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        initMqttConnection();
         initView();
         updateUI();
     }
@@ -65,13 +68,7 @@ public class BriefPubFragment extends Fragment {
         recyclerPub.setLayoutManager(linearLayoutManager);
         mAdapter = new RecyclerPubAdapter(getContext());
         recyclerPub.setAdapter(mAdapter);
-
-        // 通过接口回调执行数据库操作
-        mAdapter.setOnItemDismissListener(position -> {
-            onDelete = true;
-            publishingBox = ((App) getActivity().getApplication()).getBoxStore().boxFor(Publishing.class);
-            publishingBox.remove(publishingBox.getAll().get(position).getId());
-        });
+        mAdapter.setOnItemClickListener(pub -> MqttHelper.getInstance().publishTopic(pub.getTopic(), pub.getMsg()));
     }
 
     /**
@@ -93,6 +90,18 @@ public class BriefPubFragment extends Fragment {
         });
     }
 
+    private void initMqttConnection() {
+        MqttHelper.getInstance().createConnect(getContext(), connection);
+        MqttHelper.getInstance().doConnect();
+    }
+
+    public Connection getConnection() {
+        return connection;
+    }
+
+    public void setConnection(Connection connection) {
+        this.connection = connection;
+    }
 
     @OnClick(R.id.fab_pub_add)
     public void onViewClicked() {

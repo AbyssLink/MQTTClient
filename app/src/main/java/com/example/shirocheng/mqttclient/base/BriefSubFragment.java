@@ -79,13 +79,7 @@ public class BriefSubFragment extends Fragment {
         recyclerSub.setLayoutManager(linearLayoutManager);
         mAdapter = new RecyclerSubAdapter(getContext());
         recyclerSub.setAdapter(mAdapter);
-        mAdapter.setOnItemClickListener(new RecyclerSubAdapter.onItemClickListener() {
-
-            @Override
-            public void onSubscribe(Subscription sub) {
-                updateMsgUI(sub);
-            }
-        });
+        mAdapter.setOnItemClickListener(sub -> updateMsgUI(sub));
 
     }
 
