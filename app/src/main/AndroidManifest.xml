@@ -41,11 +41,15 @@
         <activity
             android:name=".base.add.AddPubActivity"
             android:label="add publish"
-            android:parentActivityName=".base.ControlActivity"></activity>
+            android:parentActivityName=".base.ControlActivity" />
         <activity
             android:name=".base.add.AddSubActivity"
             android:label="add subscribe"
-            android:parentActivityName=".base.ControlActivity"></activity>
+            android:parentActivityName=".base.ControlActivity" />
+        <activity
+            android:name=".smartconfig.EsptouchDemoActivity"
+            android:label="smartconfig"
+            android:parentActivityName=".base.MainActivity"></activity>
     </application>
 
 </manifest>

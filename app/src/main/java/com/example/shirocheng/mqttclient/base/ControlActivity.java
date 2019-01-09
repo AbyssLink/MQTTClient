@@ -73,10 +73,8 @@ public class ControlActivity extends AppCompatActivity implements ViewPager.OnPa
     }
 
     private void initView() {
-        //使 Toolbar 取代原本的 actionbar
         setSupportActionBar(toolbar);
         toolbar.setTitle("addConn");
-        // add a left arrow to back to parent activity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (getIntent() != null) {

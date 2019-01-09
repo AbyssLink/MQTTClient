@@ -136,6 +136,11 @@ public class BriefSubFragment extends Fragment {
             public void messageArrived(String topic, MqttMessage message) throws Exception {
                 // 数据库操作
                 msgBox = ((App) getActivity().getApplication()).getBoxStore().boxFor(Msg.class);
+                // 若数据过多，则清空数据库
+                if (msgBox.getAll().size() >= 30) {
+                    msgBox.removeAll();
+                }
+                // 添加收到的mqtt信息
                 Msg msg = new Msg();
                 msg.setMsg(message.toString());
                 msgBox.put(msg);
@@ -158,7 +163,7 @@ public class BriefSubFragment extends Fragment {
         model.getMsgLiveData(msgBox).observe(this, new Observer<List<Msg>>() {
             @Override
             public void onChanged(@Nullable List<Msg> msgs) {
-                if (msgs != null) {
+                if (msgs.size() >= 2) {
                     if (sub.getJsonKey() == null) {
                         Snackbar.make(recyclerSub, msgs.get(msgs.size() - 1).getMsg(), Snackbar.LENGTH_SHORT).show();
                     } else {
