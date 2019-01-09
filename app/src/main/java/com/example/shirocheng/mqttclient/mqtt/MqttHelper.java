@@ -150,7 +150,6 @@ public class MqttHelper {
                         Logger.w("Mqtt", "subscribed failed!");
                     }
                 });
-
                 flag = true;
             } catch (MqttException e) {
                 e.printStackTrace();

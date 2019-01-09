@@ -14,6 +14,7 @@ public class Subscription {
     private String topic;   //主题
     private Boolean isNumber;   // 是否为数字
     private String jsonKey;     // json解包后的键，用于取值
+    private String msg;     //收到的消息
 
     public Subscription() {
     }
@@ -83,4 +84,11 @@ public class Subscription {
         this.isNumber = isNumber;
     }
 
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
 }

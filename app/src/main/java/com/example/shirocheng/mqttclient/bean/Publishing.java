@@ -11,7 +11,8 @@ public class Publishing {
 
     private Long connId;    // 所属连接的主键
     private String name;    // 订阅名称
-    private String topic;   //主题
+    private String topic;   // 主题
+    private String msg;     // 发送的内容
 
     public Publishing(Long connId, String name, String topic) {
         this.connId = connId;
@@ -54,4 +55,13 @@ public class Publishing {
     public void setTopic(String topic) {
         this.topic = topic;
     }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
 }

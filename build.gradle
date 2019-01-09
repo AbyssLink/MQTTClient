@@ -12,7 +12,6 @@ buildscript {
         maven {
             url "https://repo.eclipse.org/content/repositories/paho-snapshots/"
         }
-        mavenCentral() // GreenDao repository
     }
 
     dependencies {
@@ -30,6 +29,7 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven { url 'https://jitpack.io' }
     }
 }
 

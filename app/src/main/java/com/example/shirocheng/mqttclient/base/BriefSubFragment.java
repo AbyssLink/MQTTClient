@@ -13,12 +13,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.shirocheng.mqttclient.R;
 import com.example.shirocheng.mqttclient.base.add.AddSubActivity;
+import com.example.shirocheng.mqttclient.base.model.MsgViewModel;
 import com.example.shirocheng.mqttclient.base.model.SubViewModel;
+import com.example.shirocheng.mqttclient.bean.Connection;
 import com.example.shirocheng.mqttclient.bean.Subscription;
 import com.example.shirocheng.mqttclient.db.App;
+import com.example.shirocheng.mqttclient.mqtt.MqttHelper;
+import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
 
 import java.util.List;
@@ -31,12 +36,13 @@ import io.objectbox.Box;
 public class BriefSubFragment extends Fragment {
 
 
+    private static Connection connection = null;
     @BindView(R.id.recycler_sub)
     RecyclerView recyclerSub;
     @BindView(R.id.fab_sub_add)
     FloatingActionButton fabSubAdd;
-
     private RecyclerSubAdapter mAdapter;
+    final String[] msg = new String[1];
     private Box<Subscription> subscriptionBox;
     private Boolean onDelete = false;
 
@@ -63,16 +69,18 @@ public class BriefSubFragment extends Fragment {
 
     private void initView() {
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        Logger.addLogAdapter(new AndroidLogAdapter());
         recyclerSub.setLayoutManager(linearLayoutManager);
         mAdapter = new RecyclerSubAdapter(getContext());
         recyclerSub.setAdapter(mAdapter);
+        mAdapter.setOnItemClickListener(new RecyclerSubAdapter.onItemClickListener() {
 
-        // 通过接口回调执行数据库操作
-        mAdapter.setOnItemDismissListener(position -> {
-            onDelete = true;
-            subscriptionBox = ((App) getActivity().getApplication()).getBoxStore().boxFor(Subscription.class);
-            subscriptionBox.remove(subscriptionBox.getAll().get(position).getId());
+            @Override
+            public void onSubscribe(Subscription sub) {
+                updateMsgUI(sub);
+            }
         });
+
     }
 
     /**
@@ -87,17 +95,37 @@ public class BriefSubFragment extends Fragment {
                 if (onDelete) {
                     onDelete = false;
                 } else if (subscriptions != null) {
-                    Logger.w("On Conn Changed", "warn");
                     mAdapter.setItems(subscriptions);
                 }
             }
         });
     }
 
+
     @OnClick(R.id.fab_sub_add)
     public void onViewClicked() {
         Intent intent = new Intent(getActivity(), AddSubActivity.class);
         startActivity(intent);
+    }
+
+    public Connection getConnection() {
+        return connection;
+    }
+
+    public void setConnection(Connection connection) {
+        this.connection = connection;
+    }
+
+    public void updateMsgUI(Subscription sub) {
+        MqttHelper.getInstance().createConnect(getContext(), connection);
+        MqttHelper.getInstance().doConnect();
+        MsgViewModel model = ViewModelProviders.of(this).get(MsgViewModel.class);
+        model.getSubscriptionMsg().observe(this, jsonValues -> {
+            // update UI
+            Logger.w(jsonValues, "debug mqtt");
+            Toast.makeText(getContext(), jsonValues, Toast.LENGTH_SHORT).show();
+        });
+        MqttHelper.getInstance().subscribeTopic(sub.getTopic());
     }
 
 }

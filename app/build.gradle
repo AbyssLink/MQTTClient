@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.jakewharton.butterknife'
-apply plugin: 'org.greenrobot.greendao' // GreenDao plugin
 apply plugin: 'io.objectbox' // apply last
 
 android {
@@ -26,12 +25,16 @@ android {
     }
     productFlavors {
     }
-}
-// GreenDao 数据库相关信息
-greendao {
-    schemaVersion 2 //数据库版本号
-    daoPackage 'com.example.shirocheng.mqttclient.db.dao'// 设置DaoMaster、DaoSession、Dao 包名
-    targetGenDir 'src/main/java'//设置DaoMaster、DaoSession、Dao目录
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/proguard/androidx-annotations.pro'
+    }
 }
 
 dependencies {
@@ -44,12 +47,11 @@ dependencies {
     implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.0'
     // Mqtt service
     implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
-    // EventBus
-    implementation 'org.greenrobot:eventbus:3.1.1'
     implementation 'com.orhanobut:logger:2.2.0'
     implementation 'com.android.support:support-v4:28.0.0'
     implementation 'android.arch.lifecycle:extensions:1.1.1'
     implementation 'com.yanzhenjie:recyclerview-swipe:1.2.0'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0-alpha'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'

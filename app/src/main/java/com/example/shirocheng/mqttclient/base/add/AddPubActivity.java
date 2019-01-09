@@ -32,6 +32,10 @@ public class AddPubActivity extends AppCompatActivity {
     TextInputLayout tilPubTopic;
     @BindView(R.id.btn_pub_create)
     MaterialButton btnPubCreate;
+    @BindView(R.id.et_pub_msg)
+    TextInputEditText etPubMsg;
+    @BindView(R.id.til_pub_msg)
+    TextInputLayout tilPubMsg;
 
     private Box<Publishing> publishingBox;
 
@@ -72,6 +76,7 @@ public class AddPubActivity extends AppCompatActivity {
 
         pub.setName(etPubName.getText().toString());
         pub.setTopic(etPubTopic.getText().toString());
+        pub.setMsg(etPubMsg.getText().toString());
 
         return pub;
     }

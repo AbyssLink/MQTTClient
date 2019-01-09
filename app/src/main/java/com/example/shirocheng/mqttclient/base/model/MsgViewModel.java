@@ -14,9 +14,9 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
  * 该 Model 获取实时的 Mqtt 消息
  */
 public class MsgViewModel extends ViewModel {
-    private MutableLiveData<String> jsonValues;
+    private MutableLiveData<String> jsonValues = null;
 
-    public LiveData<String> getSubscription() {
+    public LiveData<String> getSubscriptionMsg() {
         if (jsonValues == null) {
             jsonValues = new MutableLiveData<>();
             loadJsonValues();
@@ -30,7 +30,7 @@ public class MsgViewModel extends ViewModel {
     }
 
     private void startMqtt() {
-        new Thread(() -> {
+        if (MqttHelper.getInstance() != null) {
             MqttHelper.getInstance().setCallBack(new MqttCallbackExtended() {
                 @Override
                 public void connectComplete(boolean b, String s) {
@@ -43,7 +43,7 @@ public class MsgViewModel extends ViewModel {
                 @Override
                 public void messageArrived(String topic, MqttMessage mqttMessage) {
                     String message = mqttMessage.toString();
-                    jsonValues.postValue(message);
+                    jsonValues.setValue(message);
                 }
 
                 @Override
@@ -51,8 +51,6 @@ public class MsgViewModel extends ViewModel {
 
                 }
             });
-
-
-        }).start();
+        }
     }
 }

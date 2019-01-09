@@ -51,17 +51,6 @@ public class ControlActivity extends AppCompatActivity implements ViewPager.OnPa
     private BriefPubFragment briefPubFragment = new BriefPubFragment();
     private BriefSubFragment briefSubFragment = new BriefSubFragment();
     private BriefDashFragment briefDashFragment = new BriefDashFragment();
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_control);
-        ButterKnife.bind(this);
-
-        updateUI();
-        initView();
-    }
-
     private BottomNavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
@@ -72,6 +61,16 @@ public class ControlActivity extends AppCompatActivity implements ViewPager.OnPa
             return true;
         }
     };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_control);
+        ButterKnife.bind(this);
+
+        updateUI();
+        initView();
+    }
 
     private void initView() {
         //使 Toolbar 取代原本的 actionbar
@@ -95,6 +94,23 @@ public class ControlActivity extends AppCompatActivity implements ViewPager.OnPa
         }
 
         initViewPager(viewPager);
+        Intent intent = getIntent();
+        String id = intent.getStringExtra("id");
+        if (id != null) {
+            connection = connectionBox.get(Long.parseLong(id));
+
+            briefSubFragment.setConnection(connection); // 传数据给fragment
+
+            tvConnIp.setText(connection.getServerIp());
+            tvConnName.setText(connection.getClientId());
+            if (connection.isActivate()) {
+                tvConnActivate.setText("ON");
+                tvConnActivate.setBackground(getResources().getDrawable(R.drawable.tv_round_green));
+            } else {
+                tvConnActivate.setText("OFF");
+                tvConnActivate.setBackground(getResources().getDrawable(R.drawable.tv_round_red));
+            }
+        }
     }
 
     private void updateUI() {
@@ -106,6 +122,9 @@ public class ControlActivity extends AppCompatActivity implements ViewPager.OnPa
             String id = intent.getStringExtra("id");
             if (id != null) {
                 connection = connectionBox.get(Long.parseLong(id));
+
+                briefSubFragment.setConnection(connection); // 传数据给fragment
+
                 tvConnIp.setText(connection.getServerIp());
                 tvConnName.setText(connection.getClientId());
                 if (connection.isActivate()) {
@@ -164,6 +183,7 @@ public class ControlActivity extends AppCompatActivity implements ViewPager.OnPa
                 // 更新连接状态
                 connection.setActivate(true);
                 connectionBox.put(connection);
+                briefSubFragment.setConnection(connection);
                 Snackbar.make(tvConnName, "Success Connect to: " + connection.getServerIp(),
                         Snackbar.LENGTH_LONG).setAction("Action", null).show();
             } else {        //连接失败
@@ -191,6 +211,7 @@ public class ControlActivity extends AppCompatActivity implements ViewPager.OnPa
         return super.onOptionsItemSelected(item);
     }
 
+
     @Override
     public void onPageScrolled(int i, float v, int i1) {
 
@@ -206,4 +227,6 @@ public class ControlActivity extends AppCompatActivity implements ViewPager.OnPa
     public void onPageScrollStateChanged(int i) {
 
     }
+
+
 }

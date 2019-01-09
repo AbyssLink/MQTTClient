@@ -1,16 +1,11 @@
 package com.example.shirocheng.mqttclient.base;
 
-import android.app.Activity;
-import android.app.ActivityOptions;
 import android.content.Context;
-import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -30,6 +25,7 @@ public class RecyclerSubAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private int color = 0;
     private View parentView;         // todo: 修复parentview onResume时为null
     private onItemDismissListener listener;
+    private onItemClickListener onItemClickListener;
 
     public RecyclerSubAdapter(Context context) {
         this.context = context;
@@ -70,39 +66,24 @@ public class RecyclerSubAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         if (viewHolder instanceof RecyclerViewHolder) {
             final RecyclerViewHolder recyclerViewHolder = (RecyclerViewHolder) viewHolder;
 
-            if (color == 1) {
-                recyclerViewHolder.rela_round.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.google_green)));
-            } else if (color == 2) {
-                recyclerViewHolder.rela_round.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.google_yellow)));
-            } else if (color == 3) {
-                recyclerViewHolder.rela_round.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.google_red)));
-            } else if (color == 4) {
-                recyclerViewHolder.rela_round.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.gray)));
-            } else {
-                recyclerViewHolder.rela_round.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.google_blue)));
-            }
-
             // 设置视图内容
             Subscription sub = mItems.get(i);
             if (sub != null) {
                 ((RecyclerViewHolder) viewHolder).tv_name.setText(sub.getName());
                 ((RecyclerViewHolder) viewHolder).tv_topic.setText(sub.getTopic());
-                if (sub.getTopic() != null) {
-                    ((RecyclerViewHolder) viewHolder).ic_active.setColorFilter(context.getResources().getColor(R.color.google_green));
-                } else {
-                    ((RecyclerViewHolder) viewHolder).ic_active.setColorFilter(context.getResources().getColor(R.color.google_red));
-                }
+                ((RecyclerViewHolder) viewHolder).rela_round.setBackgroundResource(R.drawable.ic_notifications_none);
             }
 
             recyclerViewHolder.mView.setOnClickListener(view -> {
-                Intent intent = new Intent(context, ControlActivity.class);
-                intent.putExtra("color", color);
-                intent.putExtra("id", String.valueOf(sub.getId()));
-                context.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation
-                        ((Activity) context, recyclerViewHolder.rela_round, "shareView").toBundle());
+                Snackbar.make(parentView, "Start Subscribe", Snackbar.LENGTH_SHORT)
+                        .setAction("Action", null).show();
+                if (onItemClickListener != null) {
+                    onItemClickListener.onSubscribe(sub);
+                }
             });
         }
     }
+
 
     @Override
     public int getItemViewType(int position) {
@@ -143,8 +124,16 @@ public class RecyclerSubAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.listener = listener;
     }
 
+    public void setOnItemClickListener(onItemClickListener listener) {
+        this.onItemClickListener = listener;
+    }
+
     public interface onItemDismissListener {
         void onDeleteData(int position);
+    }
+
+    public interface onItemClickListener {
+        void onSubscribe(Subscription sub);
     }
 
 
@@ -153,7 +142,7 @@ public class RecyclerSubAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         private RelativeLayout rela_round;
         private TextView tv_name;
         private TextView tv_topic;
-        private ImageView ic_active;
+        private TextView tv_msg;
 
         private RecyclerViewHolder(View itemView) {
             super(itemView);
@@ -161,7 +150,7 @@ public class RecyclerSubAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             rela_round = itemView.findViewById(R.id.rela_round);
             tv_name = itemView.findViewById(R.id.tv_name);
             tv_topic = itemView.findViewById(R.id.tv_topic);
-            ic_active = itemView.findViewById(R.id.ic_active);
+            tv_msg = itemView.findViewById(R.id.tv_msg);
         }
     }
 
