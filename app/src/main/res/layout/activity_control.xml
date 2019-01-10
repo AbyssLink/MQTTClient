@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/activity_background"
     tools:context="com.example.shirocheng.mqttclient.base.ControlActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -21,23 +20,20 @@
             app:popupTheme="@style/AppTheme.PopupOverlay" />
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/tools"
+    <android.support.v7.widget.CardView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/card_share_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/app_bar_share_view"
-        android:layout_marginLeft="@dimen/card_margin_horizontal"
-        android:layout_marginTop="@dimen/card_margin_vertical"
-        android:layout_marginRight="@dimen/card_margin_horizontal"
-        android:layout_marginBottom="@dimen/text_margin_small"
-        android:background="@color/white"
+        android:layout_margin="@dimen/card_margin_horizontal_big_activity"
         android:clickable="true"
         android:foreground="?attr/selectableItemBackground"
         android:translationZ="6dp"
-        card_view:cardCornerRadius="4dp"
-        card_view:cardElevation="4dp">
+        app:cardCornerRadius="@dimen/card_recycler_corner_radius"
+        app:cardElevation="@dimen/card_recycler_elevation_big">
 
         <LinearLayout
+            android:id="@+id/card_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -77,8 +73,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="xxxxxxx"
-                            android:textColor="@color/black"
                             android:textAlignment="center"
+                            android:textColor="@color/colorPrimaryDark"
                             android:textSize="20dp" />
 
                     </LinearLayout>
@@ -97,6 +93,7 @@
                             android:lines="1"
                             android:text="xxx.xxx.xxx.xxx"
                             android:textAlignment="center"
+                            android:textColor="@color/colorPrimaryDark"
                             android:textSize="16dp" />
 
                     </LinearLayout>
@@ -122,12 +119,8 @@
                     </LinearLayout>
                 </LinearLayout>
             </RelativeLayout>
-
         </LinearLayout>
-
-
     </android.support.v7.widget.CardView>
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -150,8 +143,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:theme="@style/AppTheme">
-                </android.support.v4.view.ViewPager>
+                    android:theme="@style/AppTheme"></android.support.v4.view.ViewPager>
 
                 <android.support.design.widget.BottomNavigationView
                     android:id="@+id/navigation_bottom"

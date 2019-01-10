@@ -9,6 +9,7 @@
     <dimen name="app_bar_height">180dp</dimen>
     <dimen name="app_bar_height_image_view">180dp</dimen>
     <dimen name="text_margin">16dp</dimen>
+    <dimen name="text_margin_medium">12dp</dimen>
     <dimen name="text_margin_small">8dp</dimen>
     <dimen name="text_margin_very_small">4dp</dimen>
     <dimen name="btn_padding">20dp</dimen>
@@ -22,6 +23,9 @@
     <dimen name="card_margin_vertical_big_activity">4dp</dimen>
     <dimen name="card_recycler_corner_radius">2dp</dimen>
     <dimen name="card_recycler_elevation">2dp</dimen>
+    <dimen name="card_recycler_corner_radius_big">40dp</dimen>
+    <dimen name="card_recycler_elevation_big">6dp</dimen>
+
 
     <dimen name="main_card_margin_horizontal">8dp</dimen>
     <dimen name="my_apps_card_margin_horizontal">16dp</dimen>

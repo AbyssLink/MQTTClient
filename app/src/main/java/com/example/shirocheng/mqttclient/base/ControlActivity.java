@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -31,6 +32,7 @@ import io.objectbox.Box;
 
 public class ControlActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
 
+    private static Connection connection;
     @BindView(R.id.toolbar_back)
     Toolbar toolbar;
     @BindView(R.id.rela_round_big)
@@ -45,8 +47,9 @@ public class ControlActivity extends AppCompatActivity implements ViewPager.OnPa
     ViewPager viewPager;
     @BindView(R.id.navigation_bottom)
     BottomNavigationView navigationBottom;
+    @BindView(R.id.card_layout)
+    LinearLayout cardLayout;
 
-    private Connection connection;
     private Box<Connection> connectionBox;
     private BriefPubFragment briefPubFragment = new BriefPubFragment();
     private BriefSubFragment briefSubFragment = new BriefSubFragment();

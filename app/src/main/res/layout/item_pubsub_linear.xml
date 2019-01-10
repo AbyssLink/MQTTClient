@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card_view_item_recycler_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="@dimen/card_margin_horizontal_big_activity"
-    android:layout_marginTop="@dimen/card_margin_vertical_big_activity"
-    android:layout_marginEnd="@dimen/card_margin_horizontal_big_activity"
+    android:layout_marginStart="@dimen/card_subtitle_margin"
+    android:layout_marginTop="@dimen/card_margin_horizontal_big_activity"
+    android:layout_marginEnd="@dimen/card_subtitle_margin"
     android:layout_marginBottom="@dimen/card_margin_vertical_big_activity"
-    android:background="@color/white"
+    android:background="@color/activity_background"
     android:foreground="?attr/selectableItemBackground"
-    card_view:cardCornerRadius="@dimen/card_recycler_corner_radius"
-    card_view:cardElevation="@dimen/card_recycler_elevation">
+    app:cardCornerRadius="@dimen/card_recycler_corner_radius_big"
+    app:cardElevation="@dimen/card_recycler_elevation_big">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="@dimen/text_margin">
+        android:layout_height="wrap_content"
+        android:padding="@dimen/text_margin_medium">
 
         <RelativeLayout
             android:id="@+id/rela_round"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/text_margin"
             android:background="@drawable/ic_send"
@@ -34,8 +34,8 @@
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/rela_round"
             android:text="Sensor"
-            android:textColor="@color/black"
-            android:textSize="21sp" />
+            android:textColor="@color/colorPrimary"
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/tv_topic"
@@ -53,8 +53,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="5dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="15dp"
+            android:textSize="16sp"
             android:layout_marginRight="10dp"
             android:text="msg" />
 
