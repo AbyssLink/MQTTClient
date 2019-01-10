@@ -35,6 +35,7 @@ public class BriefDashFragment extends Fragment {
     Unbinder unbinder;
 
     private Box<Msg> msgBox;
+    private static BriefDashFragment mInstance = null;
 
     @Nullable
     @Override
@@ -51,9 +52,16 @@ public class BriefDashFragment extends Fragment {
         updateUI();
     }
 
-    private void updateUI() {
+    public static BriefDashFragment getInstance() {
+        if (mInstance == null) {
+            mInstance = new BriefDashFragment();
+        }
+        return mInstance;
+    }
 
-        msgBox = ((App) getActivity().getApplication()).getBoxStore().boxFor(Msg.class);
+    public void updateUI() {
+
+        msgBox = (App.getInstance()).getBoxStore().boxFor(Msg.class);
         MsgViewModel model = ViewModelProviders.of(this).get(MsgViewModel.class);
         model.getMsgLiveData(msgBox).observe(this, msgs -> {
             // update UI

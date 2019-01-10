@@ -74,10 +74,37 @@ public class AddPubActivity extends AppCompatActivity {
     private Publishing getData() {
         Publishing pub = new Publishing();
 
-        pub.setName(etPubName.getText().toString());
-        pub.setTopic(etPubTopic.getText().toString());
-        pub.setMsg(etPubMsg.getText().toString());
+        if (validateInput(etPubName.getText().toString(),
+                etPubTopic.getText().toString(), etPubMsg.getText().toString())) {
+            pub.setName(etPubName.getText().toString());
+            pub.setTopic(etPubTopic.getText().toString());
+            pub.setMsg(etPubMsg.getText().toString());
 
-        return pub;
+            return pub;
+        } else {
+            return null;
+        }
+    }
+
+    private boolean validateInput(String pubName, String pubTopic, String pubMsg) {
+        if (pubName.isEmpty()) {
+            showError(tilPubName, "can't be empty");
+            return false;
+        } else if (pubTopic.isEmpty()) {
+            showError(tilPubTopic, "can't be empty");
+            return false;
+        } else if (pubMsg.isEmpty()) {
+            showError(tilPubMsg, "can't be empty");
+            return false;
+        }
+        return true;
+    }
+
+    //显示错误提示，并获取焦点
+    private void showError(TextInputLayout textInputLayout, String error) {
+        textInputLayout.setError(error);
+        textInputLayout.getEditText().setFocusable(true);
+        textInputLayout.getEditText().setFocusableInTouchMode(true);
+        textInputLayout.getEditText().requestFocus();
     }
 }

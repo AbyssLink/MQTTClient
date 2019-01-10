@@ -78,11 +78,33 @@ public class AddSubActivity extends AppCompatActivity {
     private Subscription getData() {
         Subscription sub = new Subscription();
 
-        sub.setName(etSubName.getText().toString());
-        sub.setTopic(etSubTopic.getText().toString());
-        sub.setIsNumber(cbIsNumber.isChecked());
-        sub.setJsonKey(etSubKey.getText().toString());
+        if (validateInput(etSubName.getText().toString(), etSubTopic.getText().toString())) {
+            sub.setName(etSubName.getText().toString());
+            sub.setTopic(etSubTopic.getText().toString());
+            sub.setIsNumber(cbIsNumber.isChecked());
+            sub.setJsonKey(etSubKey.getText().toString());
+            return sub;
+        } else {
+            return null;
+        }
+    }
 
-        return sub;
+    private boolean validateInput(String subName, String subTopic) {
+        if (subName.isEmpty()) {
+            showError(tilSubName, "can't be empty");
+            return false;
+        } else if (subTopic.isEmpty()) {
+            showError(tilSubTopic, "can't be empty");
+            return false;
+        }
+        return true;
+    }
+
+    //显示错误提示，并获取焦点
+    private void showError(TextInputLayout textInputLayout, String error) {
+        textInputLayout.setError(error);
+        textInputLayout.getEditText().setFocusable(true);
+        textInputLayout.getEditText().setFocusableInTouchMode(true);
+        textInputLayout.getEditText().requestFocus();
     }
 }

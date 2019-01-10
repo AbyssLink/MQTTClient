@@ -72,6 +72,9 @@ public class RecyclerSubAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 ((RecyclerViewHolder) viewHolder).tv_name.setText(sub.getName());
                 ((RecyclerViewHolder) viewHolder).tv_topic.setText(sub.getTopic());
                 ((RecyclerViewHolder) viewHolder).rela_round.setBackgroundResource(R.drawable.ic_notifications_none);
+                if (sub.getMsg() != null) {
+                    ((RecyclerViewHolder) viewHolder).tv_msg.setText(sub.getMsg());
+                }
             }
 
             recyclerViewHolder.mView.setOnClickListener(view -> {

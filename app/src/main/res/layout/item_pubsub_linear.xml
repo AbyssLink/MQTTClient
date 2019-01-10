@@ -11,7 +11,7 @@
     android:background="@color/activity_background"
     android:foreground="?attr/selectableItemBackground"
     app:cardCornerRadius="@dimen/card_recycler_corner_radius_big"
-    app:cardElevation="@dimen/card_recycler_elevation_big">
+    app:cardElevation="@dimen/card_recycler_elevation">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -53,9 +53,11 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="5dp"
             android:layout_marginEnd="15dp"
-            android:textSize="16sp"
+            android:maxWidth="260dp"
+            android:maxLines="3"
+            android:textSize="13sp"
             android:layout_marginRight="10dp"
             android:text="msg" />
 

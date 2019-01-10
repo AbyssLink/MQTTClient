@@ -156,21 +156,23 @@ public class BriefSubFragment extends Fragment {
     public void updateMsgUI(Subscription sub) {
 
         MqttHelper.getInstance().subscribeTopic(sub.getTopic());
+        subscriptionBox = ((App) getActivity().getApplication()).getBoxStore().boxFor(Subscription.class);
 
         // 观察数据变化
         msgBox = ((App) getActivity().getApplication()).getBoxStore().boxFor(Msg.class);
         MsgViewModel model = ViewModelProviders.of(this).get(MsgViewModel.class);
-        model.getMsgLiveData(msgBox).observe(this, new Observer<List<Msg>>() {
-            @Override
-            public void onChanged(@Nullable List<Msg> msgs) {
-                if (msgs.size() >= 2) {
-                    if (sub.getJsonKey() == null) {
-                        Snackbar.make(recyclerSub, msgs.get(msgs.size() - 1).getMsg(), Snackbar.LENGTH_SHORT).show();
-                    } else {
-                        String msg = msgs.get(msgs.size() - 1).getMsg();
-                        JsonObject jsonObject = (JsonObject) new JsonParser().parse(msg);
-                        Snackbar.make(recyclerSub, jsonObject.get(sub.getJsonKey()).getAsString(), Snackbar.LENGTH_SHORT).show();
-                    }
+        model.getMsgLiveData(msgBox).observe(this, msgs -> {
+            if (msgs.size() >= 2) {
+                String msg = msgs.get(msgs.size() - 1).getMsg();
+                sub.setMsg(msg);
+                // 数据库操作
+                subscriptionBox.put(sub);
+                if (sub.getJsonKey() == null) {
+                    Snackbar.make(recyclerSub, msg, Snackbar.LENGTH_SHORT).show();
+                } else {
+                    JsonObject jsonObject = (JsonObject) new JsonParser().parse(msg);
+                    Snackbar.make(recyclerSub, jsonObject.get(sub.getJsonKey()).getAsString(), Snackbar.LENGTH_SHORT).show();
+//                    BriefDashFragment.getInstance().updateUI(sub.getJsonKey());    // 数据可视化
                 }
             }
         });

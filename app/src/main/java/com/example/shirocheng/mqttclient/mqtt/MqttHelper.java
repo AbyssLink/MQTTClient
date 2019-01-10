@@ -57,10 +57,6 @@ public class MqttHelper {
         }
     }
 
-    // 初始化 Mqtt 连接
-    private void initMqttClient() {
-
-    }
 
     // 设置回调
     public void setCallBack(MqttCallbackExtended callBack) {
@@ -157,17 +153,6 @@ public class MqttHelper {
         }
         return flag;
     }
-
-
-/*
-    // 设置接口回调
-    public interface onMessageArriveListener{
-        void onMessageArrive(String msg);
-    }
-
-    public void setOnMessageArriveListener(onMessageArriveListener listener){
-        this.listener = listener;
-    }*/
 
     /**
      * 发布消息

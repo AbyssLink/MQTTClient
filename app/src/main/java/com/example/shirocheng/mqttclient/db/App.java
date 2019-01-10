@@ -11,11 +11,15 @@ import io.objectbox.android.AndroidObjectBrowser;
 
 public class App extends Application {
 
-
+    private static App mInstance;
     public static final String TAG = "ObjectBoxExample";
     public static final boolean EXTERNAL_DIR = false;
 
     private BoxStore boxStore;
+
+    public static App getInstance() {
+        return mInstance;
+    }
 
     @Override
     public void onCreate() {
@@ -25,6 +29,7 @@ public class App extends Application {
         if (BuildConfig.DEBUG) {
             new AndroidObjectBrowser(boxStore).start(this);
         }
+        mInstance = this;
     }
 
     public BoxStore getBoxStore() {
