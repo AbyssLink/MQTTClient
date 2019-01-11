@@ -143,6 +143,7 @@ public class BriefSubFragment extends Fragment {
                 // 添加收到的mqtt信息
                 Msg msg = new Msg();
                 msg.setMsg(message.toString());
+                msg.setSubTopic(topic);
                 msgBox.put(msg);
             }
 
@@ -163,16 +164,22 @@ public class BriefSubFragment extends Fragment {
         MsgViewModel model = ViewModelProviders.of(this).get(MsgViewModel.class);
         model.getMsgLiveData(msgBox).observe(this, msgs -> {
             if (msgs.size() >= 2) {
-                String msg = msgs.get(msgs.size() - 1).getMsg();
-                sub.setMsg(msg);
+                Msg msg = msgs.get(msgs.size() - 1);
+                if (sub.getTopic().equals(msg.getSubTopic())) {
+                    sub.setMsg(msg.getMsg());
+                }
                 // 数据库操作
                 subscriptionBox.put(sub);
                 if (sub.getJsonKey() == null) {
-                    Snackbar.make(recyclerSub, msg, Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(recyclerSub, msg.getMsg(), Snackbar.LENGTH_SHORT).show();
                 } else {
-                    JsonObject jsonObject = (JsonObject) new JsonParser().parse(msg);
-                    Snackbar.make(recyclerSub, jsonObject.get(sub.getJsonKey()).getAsString(), Snackbar.LENGTH_SHORT).show();
+                    try {
+                        JsonObject jsonObject = (JsonObject) new JsonParser().parse(msg.getMsg());
+                        Snackbar.make(recyclerSub, jsonObject.get(sub.getJsonKey()).getAsString(), Snackbar.LENGTH_SHORT).show();
 //                    BriefDashFragment.getInstance().updateUI(sub.getJsonKey());    // 数据可视化
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });

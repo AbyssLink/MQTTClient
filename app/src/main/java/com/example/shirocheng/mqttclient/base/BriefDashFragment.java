@@ -61,6 +61,7 @@ public class BriefDashFragment extends Fragment {
 
     public void updateUI() {
 
+        // FIXME: 对不同主题的消息进行过滤，分别可视化
         msgBox = (App.getInstance()).getBoxStore().boxFor(Msg.class);
         MsgViewModel model = ViewModelProviders.of(this).get(MsgViewModel.class);
         model.getMsgLiveData(msgBox).observe(this, msgs -> {
@@ -70,11 +71,14 @@ public class BriefDashFragment extends Fragment {
                 try {
                     float heart = 0;
                     for (Msg msg : msgs) {
-                        JsonObject jsonObject = (JsonObject) new JsonParser().parse(msg.getMsg());
-                        String data = jsonObject.get("temp").getAsString();
-                        // turn your data into Entry objects
-                        entries.add(new Entry(heart, Float.parseFloat(data)));
-                        heart = heart + 1;
+                        // 校验消息的 topic
+                        if (msg.getSubTopic().equals("DHT11")) {
+                            JsonObject jsonObject = (JsonObject) new JsonParser().parse(msg.getMsg());
+                            String data = jsonObject.get("temp").getAsString();
+                            // turn your data into Entry objects
+                            entries.add(new Entry(heart, Float.parseFloat(data)));
+                            heart = heart + 1;
+                        }
                     }
                     LineDataSet dataSet = new LineDataSet(entries, "Label"); // add entries to dataset
                     LineData lineData = new LineData(dataSet);

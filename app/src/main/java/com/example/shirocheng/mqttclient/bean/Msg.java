@@ -10,6 +10,8 @@ public class Msg {
 
     String msg;
 
+    String subTopic;   // 用于标注来源于哪一个 sub
+
     public Long getId() {
         return id;
     }
@@ -24,5 +26,13 @@ public class Msg {
 
     public void setMsg(String msg) {
         this.msg = msg;
+    }
+
+    public String getSubTopic() {
+        return subTopic;
+    }
+
+    public void setSubTopic(String subTopic) {
+        this.subTopic = subTopic;
     }
 }
