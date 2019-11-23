@@ -27,7 +27,6 @@ import com.example.shirocheng.mqttclient.base.model.ConnViewModel;
 import com.example.shirocheng.mqttclient.base.view.ItemTouchHelperCallback;
 import com.example.shirocheng.mqttclient.bean.Connection;
 import com.example.shirocheng.mqttclient.db.App;
-import com.example.shirocheng.mqttclient.smartconfig.EsptouchDemoActivity;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
 
@@ -172,11 +171,6 @@ public class MainActivity extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(
                 menuItem -> {
                     switch (menuItem.getItemId()) {
-                        case R.id.setting_navigation_menu_item: {
-                            Intent intent = new Intent(MainActivity.this, EsptouchDemoActivity.class);
-                            startActivity(intent);
-                            break;
-                        }
                         case R.id.backup_navigation_menu_item: {
                             Intent intent =
                                     new Intent(MainActivity.this, AddConnActivity.class);
